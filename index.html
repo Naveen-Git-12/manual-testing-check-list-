@@ -141,7 +141,7 @@
 const SUPABASE_URL = 'https://ifolyizxneypiarvmvzx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlmb2x5aXp4bmV5cGlhcnZtdnp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMzE4NDAsImV4cCI6MjA5ODkwNzg0MH0.u11flF_WqwKhunWtt8r9hVZIL8ePCuptQ95Q5IeP5pU';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const FLOWS = {
   client: [
@@ -224,7 +224,7 @@ function setSyncStatus(status) {
 async function loadData() {
   setSyncStatus('syncing');
   try {
-    const { data: row, error } = await supabase.from('abo_data').select('*').eq('id', 'main').single();
+    const { data: row, error } = await sb.from('abo_data').select('*').eq('id', 'main').single();
     if (error) throw error;
     if (row && row[tab] && row[tab].length > 0) {
       data = row[tab];
@@ -252,7 +252,7 @@ async function saveData() {
     if (tab === 'client') update.notes_client = notesVal;
     else update.notes_admin = notesVal;
 
-    const { error } = await supabase.from('abo_data').upsert(update, { onConflict: 'id' });
+    const { error } = await sb.from('abo_data').upsert(update, { onConflict: 'id' });
     if (error) throw error;
     setSyncStatus('synced');
   } catch(e) {
