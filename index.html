@@ -136,12 +136,11 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = 'https://ifolyizxneypiarvmvzx.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlmb2x5aXp4bmV5cGlhcnZtdnp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMzE4NDAsImV4cCI6MjA5ODkwNzg0MH0.u11flF_WqwKhunWtt8r9hVZIL8ePCuptQ95Q5IeP5pU';
+const SB_URL = 'https://ifolyizxneypiarvmvzx.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlmb2x5aXp4bmV5cGlhcnZtdnp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMzE4NDAsImV4cCI6MjA5ODkwNzg0MH0.u11flF_WqwKhunWtt8r9hVZIL8ePCuptQ95Q5IeP5pU';
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+function sbHeaders() { return { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }; }
 
 const FLOWS = {
   client: [
@@ -224,11 +223,18 @@ function setSyncStatus(status) {
 async function loadData() {
   setSyncStatus('syncing');
   try {
-    const { data: row, error } = await sb.from('abo_data').select('*').eq('id', 'main').single();
-    if (error) throw error;
-    if (row && row[tab] && row[tab].length > 0) {
-      data = row[tab];
-      document.getElementById('notesArea').value = (tab === 'client' ? row.notes_client : row.notes_admin) || '';
+    const res = await fetch(SB_URL + '/rest/v1/abo_data?id=eq.main&select=*', { headers: sbHeaders() });
+    const rows = await res.json();
+    if (rows && rows.length > 0) {
+      const row = rows[0];
+      if (row[tab] && row[tab].length > 0) {
+        data = row[tab];
+        document.getElementById('notesArea').value = (tab === 'client' ? row.notes_client : row.notes_admin) || '';
+      } else {
+        data = JSON.parse(JSON.stringify(FLOWS[tab]));
+        document.getElementById('notesArea').value = '';
+        await saveData();
+      }
     } else {
       data = JSON.parse(JSON.stringify(FLOWS[tab]));
       document.getElementById('notesArea').value = '';
@@ -252,8 +258,12 @@ async function saveData() {
     if (tab === 'client') update.notes_client = notesVal;
     else update.notes_admin = notesVal;
 
-    const { error } = await sb.from('abo_data').upsert(update, { onConflict: 'id' });
-    if (error) throw error;
+    const res = await fetch(SB_URL + '/rest/v1/abo_data?id=eq.main', {
+      method: 'PATCH',
+      headers: sbHeaders(),
+      body: JSON.stringify(update)
+    });
+    if (!res.ok) throw new Error('Save failed');
     setSyncStatus('synced');
   } catch(e) {
     console.error('Save error:', e);
