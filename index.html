@@ -136,20 +136,12 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const REPO_OWNER = 'Naveen-Git-12';
-const REPO_NAME = 'manual-testing-check-list-';
-const DATA_FILE = 'data.json';
-const API = 'https://api.github.com';
+const SUPABASE_URL = 'https://ifolyizxneypiarvmvzx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlmb2x5aXp4bmV5cGlhcnZtdnp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMzE4NDAsImV4cCI6MjA5ODkwNzg0MH0.u11flF_WqwKhunWtt8r9hVZIL8ePCuptQ95Q5IeP5pU';
 
-function getToken() {
-  let t = localStorage.getItem('abo_gh_token');
-  if (!t) {
-    t = prompt('Enter your GitHub Personal Access Token:');
-    if (t) localStorage.setItem('abo_gh_token', t.trim());
-  }
-  return t ? t.trim() : null;
-}
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const FLOWS = {
   client: [
@@ -219,8 +211,6 @@ let tab = 'client';
 let data = [];
 let undo = null;
 let undoTimer = null;
-let fileSha = null;
-let isLoading = false;
 
 function setSyncStatus(status) {
   const el = document.getElementById('syncStatus');
@@ -231,33 +221,18 @@ function setSyncStatus(status) {
   else el.textContent = '';
 }
 
-async function ghFetch(path, opts) {
-  const res = await fetch(API + path, {
-    ...opts,
-    headers: {
-      'Authorization': 'token ' + getToken(),
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-      ...(opts.headers || {})
-    }
-  });
-  if (!res.ok) throw new Error('GitHub API error: ' + res.status);
-  return res.json();
-}
-
 async function loadData() {
-  isLoading = true;
   setSyncStatus('syncing');
   try {
-    const res = await ghFetch('/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + DATA_FILE);
-    fileSha = res.sha;
-    const decoded = JSON.parse(atob(res.content));
-    if (decoded[tab] && decoded[tab].length > 0) {
-      data = decoded[tab];
-      document.getElementById('notesArea').value = (tab === 'client' ? decoded.notes_client : decoded.notes_admin) || '';
+    const { data: row, error } = await supabase.from('abo_data').select('*').eq('id', 'main').single();
+    if (error) throw error;
+    if (row && row[tab] && row[tab].length > 0) {
+      data = row[tab];
+      document.getElementById('notesArea').value = (tab === 'client' ? row.notes_client : row.notes_admin) || '';
     } else {
       data = JSON.parse(JSON.stringify(FLOWS[tab]));
       document.getElementById('notesArea').value = '';
+      await saveData();
     }
     setSyncStatus('synced');
   } catch(e) {
@@ -266,43 +241,19 @@ async function loadData() {
     document.getElementById('notesArea').value = '';
     setSyncStatus('error');
   }
-  isLoading = false;
 }
 
 async function saveData() {
-  if (isLoading) return;
   setSyncStatus('syncing');
   try {
-    let existing = { client: FLOWS.client, admin: FLOWS.admin, notes_client: '', notes_admin: '' };
-    if (fileSha) {
-      try {
-        const res = await ghFetch('/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + DATA_FILE);
-        existing = JSON.parse(atob(res.content));
-        fileSha = res.sha;
-      } catch(e) {}
-    }
-    existing[tab] = data;
-    existing['notes_' + tab] = document.getElementById('notesArea').value;
-    const content = btoa(JSON.stringify(existing, null, 2));
-    const msg = 'Update ' + tab + ' tab - ' + new Date().toISOString();
-    if (fileSha) {
-      await ghFetch('/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + DATA_FILE, {
-        method: 'PUT',
-        body: JSON.stringify({ message: msg, content: content, sha: fileSha })
-      });
-    } else {
-      const res = await ghFetch('/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + DATA_FILE, {
-        method: 'PUT',
-        body: JSON.stringify({ message: 'Init data.json', content: btoa(JSON.stringify({ client: FLOWS.client, admin: FLOWS.admin, notes_client: '', notes_admin: '' }, null, 2)) })
-      });
-      fileSha = res.content.sha;
-      await ghFetch('/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + DATA_FILE, {
-        method: 'PUT',
-        body: JSON.stringify({ message: msg, content: content, sha: fileSha })
-      });
-    }
-    const res2 = await ghFetch('/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + DATA_FILE);
-    fileSha = res2.sha;
+    const notesVal = document.getElementById('notesArea').value;
+    const update = { id: 'main' };
+    update[tab] = data;
+    if (tab === 'client') update.notes_client = notesVal;
+    else update.notes_admin = notesVal;
+
+    const { error } = await supabase.from('abo_data').upsert(update, { onConflict: 'id' });
+    if (error) throw error;
     setSyncStatus('synced');
   } catch(e) {
     console.error('Save error:', e);
@@ -311,7 +262,6 @@ async function saveData() {
 }
 
 function save() { saveData(); }
-
 function saveNotes() { saveData(); }
 
 function clearUndo() { clearTimeout(undoTimer); undo = null; document.getElementById('undoBar').classList.remove('show'); }
@@ -326,9 +276,7 @@ async function switchTab(t) {
 }
 
 function setStatus(fi, ti, status) { clearUndo(); data[fi].tests[ti].status = data[fi].tests[ti].status === status ? '' : status; save(); render(); }
-
 function toggleNote(fi, ti) { const el = document.getElementById('n_' + fi + '_' + ti); if (el) el.classList.toggle('open'); }
-
 function updateNote(fi, ti, val) { data[fi].tests[ti].desc = val; save(); }
 
 function removeTest(fi, ti) {
