@@ -189,7 +189,10 @@
 </div>
 
 <div class="sidebar">
-  <div class="notes-hd">📝 Feature Notes</div>
+  <div class="notes-hd">
+    <span>📝 Feature Notes</span>
+    <button onclick="clearNotes()" style="margin-left:auto;background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:0.72rem;color:var(--text3);font-family:inherit;">Clear</button>
+  </div>
   <textarea class="notes-area" id="notesArea" placeholder="Write down features, requirements, ideas..." oninput="saveNotes()"></textarea>
 </div>
 
@@ -441,7 +444,14 @@ async function saveData() {
 }
 
 function save() { saveData(); }
-function saveNotes() { saveData(); }
+let notesTimer;
+function saveNotes() { clearTimeout(notesTimer); notesTimer = setTimeout(saveData, 500); }
+
+async function clearNotes() {
+  if (!confirm('Clear all notes for this tab?')) return;
+  document.getElementById('notesArea').value = '';
+  await saveData();
+}
 
 function clearUndo() { clearTimeout(undoTimer); undo = null; document.getElementById('undoBar').classList.remove('show'); }
 
