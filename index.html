@@ -203,88 +203,54 @@ const DEFAULT_FLOWS = {
     ]},
   ],
   bar_owner: [
-    { num:"1", flow:"Dashboard Overview", tests:[
+    { num:"1", flow:"Bar Owner Dashboard & Management", tests:[
       {name:"View Revenue Summary", type:"positive"},{name:"View Customer Count", type:"positive"},{name:"View Active Offers", type:"positive"},{name:"View Today's Check-ins", type:"positive"},
-    ]},
-    { num:"2", flow:"Bar Management", tests:[
       {name:"Edit Bar Details", type:"positive"},{name:"Update Bar Timings", type:"positive"},{name:"Update Bar Photos", type:"positive"},{name:"Set Bar Location", type:"positive"},
-    ]},
-    { num:"3", flow:"Offer Management", tests:[
       {name:"Create New Offer", type:"positive"},{name:"Edit Existing Offer", type:"positive"},{name:"Delete Offer", type:"positive"},{name:"Set Offer Validity", type:"positive"},{name:"View Offer Analytics", type:"positive"},
-    ]},
-    { num:"4", flow:"Event Management", tests:[
       {name:"Create New Event", type:"positive"},{name:"Edit Event Details", type:"positive"},{name:"Set Ticket Pricing", type:"positive"},{name:"Cancel Event", type:"negative"},{name:"View Event Bookings", type:"positive"},
-    ]},
-    { num:"5", flow:"Staff Management", tests:[
       {name:"Add Staff Member", type:"positive"},{name:"Remove Staff Member", type:"positive"},{name:"Assign Roles", type:"positive"},{name:"View Staff Activity", type:"positive"},
-    ]},
-    { num:"6", flow:"Analytics & Reports", tests:[
       {name:"View Daily Reports", type:"positive"},{name:"View Weekly Reports", type:"positive"},{name:"Export Data", type:"positive"},{name:"View Customer Feedback", type:"positive"},
     ]},
   ],
   bar_entry: [
-    { num:"1", flow:"Customer Entry", tests:[
+    { num:"1", flow:"Bar Entry & Queue Management", tests:[
       {name:"Scan Customer QR Code", type:"positive"},{name:"Validate QR → Allow Entry", type:"positive"},{name:"Invalid QR → Deny Entry", type:"negative"},{name:"Already Checked In → Message", type:"negative"},{name:"Update Entry Count", type:"positive"},
-    ]},
-    { num:"2", flow:"Queue Management", tests:[
       {name:"View Queue Status", type:"positive"},{name:"Skip Queue QR Scan", type:"positive"},{name:"VIP Entry", type:"positive"},{name:"Capacity Full → Stop Entry", type:"negative"},
-    ]},
-    { num:"3", flow:"Table Assignment", tests:[
       {name:"Scan Table QR", type:"positive"},{name:"Assign Table to Customer", type:"positive"},{name:"Table Already Occupied → Error", type:"negative"},{name:"Free Table on Checkout", type:"positive"},
     ]},
   ],
   bar_waiter: [
-    { num:"1", flow:"Offer Redemption", tests:[
+    { num:"1", flow:"Bar Waiter — Offers, Table Service & Games", tests:[
       {name:"Scan Customer Offer QR", type:"positive"},{name:"Validate Offer → Redeem", type:"positive"},{name:"Already Redeemed → Error", type:"negative"},{name:"Expired Offer → Error", type:"negative"},{name:"Update Offer Status", type:"positive"},
-    ]},
-    { num:"2", flow:"Table Service", tests:[
       {name:"View Assigned Tables", type:"positive"},{name:"Scan Table QR → View Orders", type:"positive"},{name:"Mark Order Delivered", type:"positive"},{name:"Flag Issue to Manager", type:"positive"},
-    ]},
-    { num:"3", flow:"Game Offer Scan", tests:[
       {name:"Scan Game Won QR", type:"positive"},{name:"Validate Game Offer", type:"positive"},{name:"Redeem Game Offer", type:"positive"},{name:"Invalid Game QR → Error", type:"negative"},
     ]},
   ],
   dj: [
-    { num:"1", flow:"Song Requests", tests:[
+    { num:"1", flow:"DJ — Songs, Shout-Outs & Playlist", tests:[
       {name:"View Incoming Song Requests", type:"positive"},{name:"Approve Song → Play", type:"positive"},{name:"Reject Song → Refund Coins", type:"positive"},{name:"View Request Queue", type:"positive"},{name:"No Requests → Empty State", type:"negative"},
-    ]},
-    { num:"2", flow:"Shout-Out Requests", tests:[
       {name:"View Incoming Shout-Outs", type:"positive"},{name:"Approve Shout-Out → Announce", type:"positive"},{name:"Reject Shout-Out", type:"positive"},{name:"Empty Message → Skip", type:"negative"},
-    ]},
-    { num:"3", flow:"Playlist Control", tests:[
       {name:"View Current Playlist", type:"positive"},{name:"Add Song to Queue", type:"positive"},{name:"Remove Song from Queue", type:"positive"},{name:"Skip Current Song", type:"positive"},
     ]},
   ],
   eventier: [
-    { num:"1", flow:"Event Setup", tests:[
+    { num:"1", flow:"Eventier — Event Setup, Bookings & Analytics", tests:[
       {name:"Create Event → Fill Details", type:"positive"},{name:"Upload Event Banner", type:"positive"},{name:"Set Ticket Types & Pricing", type:"positive"},{name:"Set Event Date & Time", type:"positive"},{name:"Publish Event", type:"positive"},{name:"Save as Draft", type:"positive"},
-    ]},
-    { num:"2", flow:"Booking Management", tests:[
       {name:"View All Bookings", type:"positive"},{name:"View Booking Details", type:"positive"},{name:"Cancel Booking → Refund", type:"positive"},{name:"Check-in Guest via QR", type:"positive"},{name:"Export Guest List", type:"positive"},
-    ]},
-    { num:"3", flow:"Event Analytics", tests:[
       {name:"View Ticket Sales", type:"positive"},{name:"View Revenue", type:"positive"},{name:"View Attendance Rate", type:"positive"},
     ]},
   ],
   valet_driver: [
-    { num:"1", flow:"Ride Requests", tests:[
+    { num:"1", flow:"Valet Driver — Rides & Availability", tests:[
       {name:"View Incoming Ride Request", type:"positive"},{name:"Accept Ride → Navigate to Customer", type:"positive"},{name:"Reject Ride → Reassign", type:"negative"},{name:"No Requests → Idle State", type:"negative"},
-    ]},
-    { num:"2", flow:"Trip Flow", tests:[
       {name:"Arrive at Pickup → Notify Customer", type:"positive"},{name:"Start Trip", type:"positive"},{name:"End Trip → Drop Complete", type:"positive"},{name:"Trip Cancelled by Customer", type:"negative"},
-    ]},
-    { num:"3", flow:"Availability", tests:[
       {name:"Go Online → Accept Rides", type:"positive"},{name:"Go Offline → Stop Rides", type:"positive"},{name:"Auto-Offline After Inactivity", type:"negative"},
     ]},
   ],
   valet_manager: [
-    { num:"1", flow:"Driver Management", tests:[
+    { num:"1", flow:"Valet Manager — Drivers, Rides & Payouts", tests:[
       {name:"View All Drivers", type:"positive"},{name:"Approve New Driver", type:"positive"},{name:"Block Driver", type:"negative"},{name:"View Driver Ratings", type:"positive"},
-    ]},
-    { num:"2", flow:"Ride Oversight", tests:[
       {name:"View Active Rides", type:"positive"},{name:"View Ride History", type:"positive"},{name:"Assign Ride to Driver", type:"positive"},{name:"Cancel Ride", type:"negative"},{name:"Handle Customer Complaint", type:"positive"},
-    ]},
-    { num:"3", flow:"Payout & Reports", tests:[
       {name:"View Driver Earnings", type:"positive"},{name:"Process Payout", type:"positive"},{name:"View Daily Ride Summary", type:"positive"},{name:"Export Reports", type:"positive"},
     ]},
   ],
