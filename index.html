@@ -433,9 +433,9 @@ async function saveData() {
     const nk = tab === 'client' ? 'notes_client' : 'notes_' + subTab;
     update[nk] = notesVal;
 
-    const res = await fetch(SB_URL + '/rest/v1/abo_data?id=eq.main', {
-      method: 'PATCH',
-      headers: sbHeaders(),
+    const res = await fetch(SB_URL + '/rest/v1/abo_data', {
+      method: 'POST',
+      headers: { ...sbHeaders(), 'Prefer': 'resolution=merge-duplicates,return=representation' },
       body: JSON.stringify(update)
     });
     if (!res.ok) throw new Error('Save failed');
