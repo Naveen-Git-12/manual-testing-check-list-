@@ -206,41 +206,91 @@ const DEFAULT_FLOWS = {
     ]},
   ],
   bar_owner: [
-    { num:"1", flow:"Bar Owner Dashboard & Management", tests:[
-      {name:"View Revenue Summary", type:"positive"},{name:"View Customer Count", type:"positive"},{name:"View Active Offers", type:"positive"},{name:"View Today's Check-ins", type:"positive"},
-      {name:"Edit Bar Details", type:"positive"},{name:"Update Bar Timings", type:"positive"},{name:"Update Bar Photos", type:"positive"},{name:"Set Bar Location", type:"positive"},
-      {name:"Create New Offer", type:"positive"},{name:"Edit Existing Offer", type:"positive"},{name:"Delete Offer", type:"positive"},{name:"Set Offer Validity", type:"positive"},{name:"View Offer Analytics", type:"positive"},
-      {name:"Create New Event", type:"positive"},{name:"Edit Event Details", type:"positive"},{name:"Set Ticket Pricing", type:"positive"},{name:"Cancel Event", type:"negative"},{name:"View Event Bookings", type:"positive"},
-      {name:"Add Staff Member", type:"positive"},{name:"Remove Staff Member", type:"positive"},{name:"Assign Roles", type:"positive"},{name:"View Staff Activity", type:"positive"},
-      {name:"View Daily Reports", type:"positive"},{name:"View Weekly Reports", type:"positive"},{name:"Export Data", type:"positive"},{name:"View Customer Feedback", type:"positive"},
+    { num:"1", flow:"Coins – Buy Coins & Payment", tests:[
+      {name:"Homepage > Coins", type:"positive"},{name:"Buy Coins", type:"positive"},{name:"Continue to Payment", type:"positive"},{name:"Payment Options Displayed", type:"positive"},{name:"Select Payment Method (GPay/PhonePe/UPI/Card)", type:"positive"},{name:"Click Continue → Redirect to Payment App", type:"positive"},{name:"Make Payment", type:"positive"},{name:"Payment Successful", type:"positive"},{name:"Coins Added Successfully", type:"positive"},{name:"Payment Failed → Error Message", type:"negative"},{name:"Insufficient Balance → Error", type:"negative"},
+    ]},
+    { num:"2", flow:"Notifications", tests:[
+      {name:"Homepage > Notifications", type:"positive"},{name:"View Notifications List", type:"positive"},{name:"Open Notification", type:"positive"},{name:"Read Details", type:"positive"},{name:"Take Action (if applicable)", type:"positive"},{name:"Mark as Read", type:"positive"},{name:"Done", type:"positive"},{name:"Empty Notifications → Empty State", type:"negative"},
+    ]},
+    { num:"3", flow:"Profile – With Changes", tests:[
+      {name:"Homepage > Profile", type:"positive"},{name:"Edit Profile", type:"positive"},{name:"Update Details (Name/Email/Phone/DOB/Gender/Profile Picture)", type:"positive"},{name:"Changes Made? Yes", type:"positive"},{name:"Update Selected Fields", type:"positive"},{name:"Save Changes", type:"positive"},{name:"Profile Updated Successfully", type:"positive"},{name:"Back to Profile Page", type:"positive"},
+    ]},
+    { num:"4", flow:"Profile – No Changes", tests:[
+      {name:"Homepage > Profile", type:"positive"},{name:"Edit Profile", type:"positive"},{name:"Update Details", type:"positive"},{name:"Changes Made? No", type:"negative"},{name:"No Changes Detected", type:"negative"},{name:"Save Disabled", type:"negative"},{name:"Back to Profile Page", type:"positive"},
+    ]},
+    { num:"5", flow:"Check-in – Manual Approval", tests:[
+      {name:"Homepage > Check-in Settings", type:"positive"},{name:"Select Approval Type > Manual Approval", type:"positive"},{name:"View Check-in Requests", type:"positive"},{name:"Check User Details", type:"positive"},{name:"Approve Check-in", type:"positive"},{name:"Reject Check-in", type:"positive"},{name:"Each Check-in Individually", type:"positive"},
+    ]},
+    { num:"6", flow:"Check-in – Automatic Approval", tests:[
+      {name:"Homepage > Check-in Settings", type:"positive"},{name:"Select Approval Type > Enable Automatic Approval", type:"positive"},{name:"Approve All Check-in Requests Automatically", type:"positive"},{name:"All Future Check-ins Auto Approved", type:"positive"},
+    ]},
+    { num:"7", flow:"Check-in – Disable", tests:[
+      {name:"Homepage > Check-in Settings", type:"positive"},{name:"Select Approval Type > Disable Check-ins", type:"positive"},{name:"No Check-in Requests Accepted", type:"positive"},{name:"Check-in Feature Disabled", type:"positive"},
     ]},
   ],
   bar_entry: [
-    { num:"1", flow:"Bar Entry & Queue Management", tests:[
-      {name:"Scan Customer QR Code", type:"positive"},{name:"Validate QR → Allow Entry", type:"positive"},{name:"Invalid QR → Deny Entry", type:"negative"},{name:"Already Checked In → Message", type:"negative"},{name:"Update Entry Count", type:"positive"},
-      {name:"View Queue Status", type:"positive"},{name:"Skip Queue QR Scan", type:"positive"},{name:"VIP Entry", type:"positive"},{name:"Capacity Full → Stop Entry", type:"negative"},
-      {name:"Scan Table QR", type:"positive"},{name:"Assign Table to Customer", type:"positive"},{name:"Table Already Occupied → Error", type:"negative"},{name:"Free Table on Checkout", type:"positive"},
+    { num:"1", flow:"Dashboard", tests:[
+      {name:"Dashboard Page Loads", type:"positive"},{name:"Total Members Inside Visible", type:"positive"},{name:"Available Table Count Visible", type:"positive"},{name:"Today's Stats Visible (count)", type:"positive"},{name:"Male/Female/Couples/Groups Breakdown", type:"positive"},{name:"Weekly Overview Count (date, day wise)", type:"positive"},
+    ]},
+    { num:"2", flow:"Scan – QR", tests:[
+      {name:"Scan > QR Scan Selected", type:"positive"},{name:"QR Code Scanned", type:"positive"},{name:"Scan the Customer QR", type:"positive"},{name:"Entry Added Successfully", type:"positive"},{name:"Invalid QR → Error", type:"negative"},{name:"Already Scanned → Duplicate Entry Blocked", type:"negative"},
+    ]},
+    { num:"3", flow:"Scan – No QR", tests:[
+      {name:"Scan > No QR Scan Selected", type:"positive"},{name:"No QR Code Scanned? Prompt", type:"positive"},{name:"Go to Contact Page", type:"positive"},
+    ]},
+    { num:"4", flow:"Manual Entry", tests:[
+      {name:"Contact Page (Manual Entry) Opens", type:"positive"},{name:"Entry Log Visible", type:"positive"},{name:"Enter Contact Details > Name", type:"positive"},{name:"Enter Contact Details > Phone No", type:"positive"},{name:"Add Count (Male/Female/Couple/Groups)", type:"positive"},{name:"Enter Date", type:"positive"},{name:"Enter No. of People", type:"positive"},{name:"Save Entry", type:"positive"},{name:"Contact Details Saved Successfully", type:"positive"},{name:"Reflects in Dashboard", type:"positive"},{name:"Added to Recent Entries", type:"positive"},{name:"Empty Name → Error", type:"negative"},{name:"Empty Phone → Error", type:"negative"},{name:"Zero People → Error", type:"negative"},
     ]},
   ],
   bar_waiter: [
-    { num:"1", flow:"Bar Waiter — Offers, Table Service & Games", tests:[
-      {name:"Scan Customer Offer QR", type:"positive"},{name:"Validate Offer → Redeem", type:"positive"},{name:"Already Redeemed → Error", type:"negative"},{name:"Expired Offer → Error", type:"negative"},{name:"Update Offer Status", type:"positive"},
-      {name:"View Assigned Tables", type:"positive"},{name:"Scan Table QR → View Orders", type:"positive"},{name:"Mark Order Delivered", type:"positive"},{name:"Flag Issue to Manager", type:"positive"},
-      {name:"Scan Game Won QR", type:"positive"},{name:"Validate Game Offer", type:"positive"},{name:"Redeem Game Offer", type:"positive"},{name:"Invalid Game QR → Error", type:"negative"},
+    { num:"1", flow:"Dashboard & Table Management", tests:[
+      {name:"Dashboard Page Loads", type:"positive"},{name:"Available/Occupied Tables Visible", type:"positive"},{name:"Select One Table", type:"positive"},{name:"Unclaimed Offers Displayed", type:"positive"},{name:"Select Offer to Claim", type:"positive"},{name:"Claim Offer", type:"positive"},{name:"Claimed Successfully", type:"positive"},
+    ]},
+    { num:"2", flow:"Table Management – Claimed & Bill", tests:[
+      {name:"Dashboard Page > Select Occupied Table", type:"positive"},{name:"Claimed Offers Displayed", type:"positive"},{name:"Bill Settlement", type:"positive"},{name:"Enter Bill Amount", type:"positive"},{name:"Close Table", type:"positive"},{name:"Table Reset – Start Fresh", type:"positive"},{name:"Empty Bill Amount → Error", type:"negative"},
+    ]},
+    { num:"3", flow:"Offers Page", tests:[
+      {name:"Offers Page Opens", type:"positive"},{name:"Claimed Offers Visible", type:"positive"},{name:"View Claimed Offers Date-wise", type:"positive"},{name:"Select Date", type:"positive"},{name:"Claimed Offers for Particular Day Displayed", type:"positive"},{name:"No Offers for Date → Empty State", type:"negative"},
+    ]},
+    { num:"4", flow:"Scan – QR", tests:[
+      {name:"Scan > QR Code Selected", type:"positive"},{name:"Select Table", type:"positive"},{name:"Table Assigned Successfully", type:"positive"},{name:"Invalid QR → Error", type:"negative"},{name:"Table Already Occupied → Error", type:"negative"},
+    ]},
+    { num:"5", flow:"Scan – Manual", tests:[
+      {name:"Scan > Enter Customer Mail ID Manually", type:"positive"},{name:"Click Go", type:"positive"},{name:"Select Table", type:"positive"},{name:"Table Assigned Successfully", type:"positive"},{name:"Invalid Email → Error", type:"negative"},
     ]},
   ],
   dj: [
-    { num:"1", flow:"DJ — Songs, Shout-Outs & Playlist", tests:[
-      {name:"View Incoming Song Requests", type:"positive"},{name:"Approve Song → Play", type:"positive"},{name:"Reject Song → Refund Coins", type:"positive"},{name:"View Request Queue", type:"positive"},{name:"No Requests → Empty State", type:"negative"},
-      {name:"View Incoming Shout-Outs", type:"positive"},{name:"Approve Shout-Out → Announce", type:"positive"},{name:"Reject Shout-Out", type:"positive"},{name:"Empty Message → Skip", type:"negative"},
-      {name:"View Current Playlist", type:"positive"},{name:"Add Song to Queue", type:"positive"},{name:"Remove Song from Queue", type:"positive"},{name:"Skip Current Song", type:"positive"},
+    { num:"1", flow:"Requests – ON", tests:[
+      {name:"Dashboard > Requests > ON", type:"positive"},{name:"Select Languages for Music Requests", type:"positive"},{name:"Click Done", type:"positive"},{name:"Song Requests Displayed", type:"positive"},{name:"Shout Outs Displayed", type:"positive"},{name:"Accept Song Request", type:"positive"},{name:"Reject Song Request", type:"positive"},{name:"Accept Shout-Out", type:"positive"},{name:"Reject Shout-Out", type:"positive"},
+    ]},
+    { num:"2", flow:"Requests – OFF", tests:[
+      {name:"Dashboard > Requests > OFF", type:"positive"},{name:"No Requests Displayed", type:"positive"},{name:"Turn On to Receive Requests", type:"positive"},
+    ]},
+    { num:"3", flow:"Edit Profile – With Changes", tests:[
+      {name:"Profile > Edit Profile", type:"positive"},{name:"Update Details (Name/Email/Phone/DOB/Description/Gender)", type:"positive"},{name:"Changes Made? Yes", type:"positive"},{name:"Update Selected Fields", type:"positive"},{name:"Save Changes", type:"positive"},{name:"Profile Updated Successfully", type:"positive"},{name:"Back to Profile Page", type:"positive"},
+    ]},
+    { num:"4", flow:"Edit Profile – No Changes", tests:[
+      {name:"Profile > Edit Profile", type:"positive"},{name:"Update Details", type:"positive"},{name:"Changes Made? No", type:"negative"},{name:"No Changes Detected", type:"negative"},{name:"Save Disabled", type:"negative"},{name:"Back to Profile Page", type:"positive"},
     ]},
   ],
   eventier: [
-    { num:"1", flow:"Eventier — Event Setup, Bookings & Analytics", tests:[
-      {name:"Create Event → Fill Details", type:"positive"},{name:"Upload Event Banner", type:"positive"},{name:"Set Ticket Types & Pricing", type:"positive"},{name:"Set Event Date & Time", type:"positive"},{name:"Publish Event", type:"positive"},{name:"Save as Draft", type:"positive"},
-      {name:"View All Bookings", type:"positive"},{name:"View Booking Details", type:"positive"},{name:"Cancel Booking → Refund", type:"positive"},{name:"Check-in Guest via QR", type:"positive"},{name:"Export Guest List", type:"positive"},
-      {name:"View Ticket Sales", type:"positive"},{name:"View Revenue", type:"positive"},{name:"View Attendance Rate", type:"positive"},
+    { num:"1", flow:"Homepage", tests:[
+      {name:"Homepage Loads", type:"positive"},{name:"Today's Revenue Displayed (Current Date)", type:"positive"},{name:"Events Tab Visible", type:"positive"},{name:"Booking Tab Visible", type:"positive"},{name:"Live Tab Visible", type:"positive"},
+    ]},
+    { num:"2", flow:"Events Page", tests:[
+      {name:"Events Page Opens", type:"positive"},{name:"LIVE Events Visible (Approved / Pending)", type:"positive"},{name:"DRAFT Events Visible", type:"positive"},{name:"CANCELLED Events Visible", type:"positive"},{name:"Filter by Status", type:"positive"},
+    ]},
+    { num:"3", flow:"Create Event Manually", tests:[
+      {name:"Create New Event > Create Manually", type:"positive"},{name:"1. Add Cover Photo/Video", type:"positive"},{name:"2. Enter Event Title", type:"positive"},{name:"3. Start Date", type:"positive"},{name:"4. Start Time", type:"positive"},{name:"5. Duration", type:"positive"},{name:"6. Description", type:"positive"},{name:"7. Enter Artist/Host", type:"positive"},{name:"8. Language", type:"positive"},{name:"9. Age Limit", type:"positive"},{name:"10. Max Capacity", type:"positive"},{name:"11. Indoor/Outdoor", type:"positive"},{name:"12. Tickets (Free/Paid)", type:"positive"},{name:"13. Actions (Reset Form/Next)", type:"positive"},{name:"14. Review Event Details", type:"positive"},{name:"15. Publish Options (Save as Draft / Publish Live)", type:"positive"},{name:"Empty Title → Error", type:"negative"},{name:"No Date Selected → Error", type:"negative"},{name:"Past Date → Error", type:"negative"},
+    ]},
+    { num:"4", flow:"Create Event with AI", tests:[
+      {name:"Create New Event > Create with AI (Pro)", type:"positive"},{name:"Create Event Automatically using AI", type:"positive"},{name:"AI Generates Event Details", type:"positive"},{name:"Review AI Generated Details", type:"positive"},{name:"Edit Before Publishing", type:"positive"},{name:"Publish / Save as Draft", type:"positive"},
+    ]},
+    { num:"5", flow:"Edit Profile – With Changes", tests:[
+      {name:"Profile > Edit Profile", type:"positive"},{name:"Update Details (Name/Email/Phone/DOB/Description/Gender)", type:"positive"},{name:"Changes Made? Yes", type:"positive"},{name:"Update Selected Fields", type:"positive"},{name:"Save Changes", type:"positive"},{name:"Profile Updated Successfully", type:"positive"},{name:"Back to Profile Page", type:"positive"},
+    ]},
+    { num:"6", flow:"Edit Profile – No Changes", tests:[
+      {name:"Profile > Edit Profile", type:"positive"},{name:"Update Details", type:"positive"},{name:"Changes Made? No", type:"negative"},{name:"No Changes Detected", type:"negative"},{name:"Save Disabled", type:"negative"},{name:"Back to Profile Page", type:"positive"},
     ]},
   ],
   valet_driver: [
