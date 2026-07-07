@@ -191,7 +191,10 @@
 <div class="sidebar">
   <div class="notes-hd">
     <span>📝 Feature Notes</span>
-    <button onclick="clearNotes()" style="margin-left:auto;background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:0.72rem;color:var(--text3);font-family:inherit;">Clear</button>
+    <div style="display:flex;gap:6px;margin-left:auto;">
+      <button onclick="saveNotesNow()" style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:0.72rem;font-weight:600;font-family:inherit;">Save</button>
+      <button onclick="clearNotes()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:0.72rem;color:var(--text3);font-family:inherit;">Clear</button>
+    </div>
   </div>
   <textarea class="notes-area" id="notesArea" placeholder="Write down features, requirements, ideas..." oninput="saveNotes()"></textarea>
 </div>
@@ -446,6 +449,7 @@ async function saveData() {
 function save() { saveData(); }
 let notesTimer;
 function saveNotes() { clearTimeout(notesTimer); notesTimer = setTimeout(saveData, 500); }
+function saveNotesNow() { clearTimeout(notesTimer); saveData(); }
 
 async function clearNotes() {
   if (!confirm('Clear all notes for this tab?')) return;
