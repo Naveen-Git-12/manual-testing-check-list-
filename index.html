@@ -52,6 +52,9 @@
   .flow-hd .act .edit:hover { color: #4f46e5; background: #eef0ff; }
   .flow-hd .act .del:hover { color: #dc2626; background: #fee2e2; }
   .flow-hd .act .addt:hover { color: #16a34a; background: #dcfce7; }
+  .flow.collapsed .case-group { display: none; }
+  .flow.collapsed .ins-btn { display: none; }
+  .flow.collapsed .flow-hd { border-bottom: none; }
   .case-group { padding: 4px 0; }
   .case-label { padding: 8px 20px 4px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
   .case-label.pos { color: #16a34a; }
@@ -432,6 +435,7 @@ function clearStatus() {
 }
 
 let dragIdx = null;
+let collapsed = new Set();
 
 function dragStart(e, idx) {
   dragIdx = idx;
@@ -475,6 +479,12 @@ function moveFlow(idx, dir) {
   save(); render();
 }
 
+function toggleCollapse(idx) {
+  if (collapsed.has(idx)) collapsed.delete(idx);
+  else collapsed.add(idx);
+  render();
+}
+
 function render() {
   const q = (document.getElementById('search').value || '').toLowerCase();
   const el = document.getElementById('content');
@@ -499,12 +509,13 @@ function render() {
     const pos = f.tests.filter(t => t.type !== 'negative');
     const neg = f.tests.filter(t => t.type === 'negative');
 
-    html += '<div class="flow" draggable="true" ondragstart="dragStart(event,' + idx + ')" ondragend="dragEnd(event)" ondragover="dragOver(event,' + idx + ')" ondragleave="dragLeave(event)" ondrop="drop(event,' + idx + ')"><div class="flow-hd">';
+    html += '<div class="flow' + (collapsed.has(idx) ? ' collapsed' : '') + '" draggable="true" ondragstart="dragStart(event,' + idx + ')" ondragend="dragEnd(event)" ondragover="dragOver(event,' + idx + ')" ondragleave="dragLeave(event)" ondrop="drop(event,' + idx + ')"><div class="flow-hd">';
     html += '<span class="grip" title="Drag to reorder">⠿</span>';
     html += '<span class="num" onclick="editFlowNum(' + idx + ')" title="Edit number">' + f.num + '</span>';
     html += '<span class="fname" onclick="editFlowName(' + idx + ')" title="Edit name">' + f.flow + '</span>';
     html += '<span class="count">' + f.tests.length + '</span>';
     html += '<div class="act">';
+    html += '<button class="edit" onclick="toggleCollapse(' + idx + ')" title="Minimize">' + (collapsed.has(idx) ? '▸' : '▾') + '</button>';
     html += '<button class="addt" onclick="addTest(' + idx + ', \'positive\')" title="Add positive test">+</button>';
     html += '<button class="addt" onclick="addTest(' + idx + ', \'negative\')" title="Add negative test">−</button>';
     html += '<button class="edit" onclick="editFlowName(' + idx + ')" title="Edit flow">✎</button>';
