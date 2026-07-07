@@ -140,11 +140,36 @@
   .sync-status.syncing { color: #fbbf24; }
   .sync-status.synced { color: var(--green); }
   .sync-status.error { color: var(--red); }
+
+  .login-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+  .login-overlay.hidden { display: none; }
+  .login-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 48px 40px; width: 380px; box-shadow: var(--shadow); text-align: center; }
+  .login-card h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; }
+  .login-card h2 span { background: var(--accentgrad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .login-card p { color: var(--text3); font-size: 0.85rem; margin-bottom: 30px; }
+  .login-card input { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg3); color: var(--text); font-size: 0.9rem; margin-bottom: 14px; font-family: inherit; transition: border 0.2s; }
+  .login-card input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent3); }
+  .login-card input::placeholder { color: var(--text4); }
+  .login-card button.login-btn { width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--accentgrad); color: #fff; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; margin-top: 4px; }
+  .login-card button.login-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+  .login-card .login-err { color: var(--red); font-size: 0.8rem; margin-top: 12px; display: none; }
+  .login-card .login-err.show { display: block; }
 </style>
 </head>
 <body>
 
-<div class="layout">
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <h2><span>ABO</span> Test Sheet</h2>
+    <p>Sign in to continue</p>
+    <input type="text" id="loginUser" placeholder="Username" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()">
+    <input type="password" id="loginPass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-err" id="loginErr">Invalid username or password</div>
+  </div>
+</div>
+
+<div class="layout" id="mainLayout" style="display:none;">
 <div class="main">
 
 <div class="top">
@@ -153,6 +178,7 @@
   <span class="sync-status" id="syncStatus"></span>
   <div class="top-actions">
     <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+    <button class="rs" onclick="doLogout()" title="Logout">🚪 Logout</button>
     <button onclick="addFlow()">+ Flow</button>
     <button class="dl" onclick="download()">⬇ Download</button>
     <button class="rs" onclick="clearStatus()">Clear Status</button>
@@ -206,6 +232,31 @@ const SB_URL = 'https://ifolyizxneypiarvmvzx.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlmb2x5aXp4bmV5cGlhcnZtdnp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMzE4NDAsImV4cCI6MjA5ODkwNzg0MH0.u11flF_WqwKhunWtt8r9hVZIL8ePCuptQ95Q5IeP5pU';
 
 function sbHeaders() { return { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }; }
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (u === 'aboadmin' && p === 'adminlogin') {
+    localStorage.setItem('abo-auth', '1');
+    document.getElementById('loginOverlay').classList.add('hidden');
+    document.getElementById('mainLayout').style.display = '';
+    init();
+  } else {
+    document.getElementById('loginErr').classList.add('show');
+    setTimeout(() => document.getElementById('loginErr').classList.remove('show'), 3000);
+  }
+}
+function doLogout() {
+  localStorage.removeItem('abo-auth');
+  location.reload();
+}
+function checkAuth() {
+  if (localStorage.getItem('abo-auth') === '1') {
+    document.getElementById('loginOverlay').classList.add('hidden');
+    document.getElementById('mainLayout').style.display = '';
+    init();
+  }
+}
 
 const ADMIN_SUBS = ['bar_owner','bar_entry','bar_waiter','dj','eventier','valet_driver','valet_manager'];
 
@@ -738,8 +789,11 @@ function download() {
   w.document.close();
 }
 
-document.getElementById('today').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-loadData().then(() => render());
+function init() {
+  document.getElementById('today').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  loadData().then(() => render());
+}
+checkAuth();
 </script>
 </body>
 </html>
