@@ -13,7 +13,6 @@
   .sidebar .notes-hd { padding: 14px 18px; background: #f8f9fb; border-bottom: 1px solid #e8eaee; font-size: 0.85rem; font-weight: 600; color: #555; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
   .sidebar .notes-area { flex: 1; width: 100%; border: none; color: #333; font-size: 0.88rem; padding: 14px 18px; resize: none; font-family: inherit; line-height: 1.6; display: block; }
   .sidebar .notes-area:focus { outline: none; }
-  .notes-toggle { display: none; }
   .top { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
   .top h1 { font-size: 1.5rem; font-weight: 700; color: #111; }
   .top .date { font-size: 0.85rem; color: #999; }
@@ -23,17 +22,20 @@
   .top-actions .dl { background: #4f46e5; color: #fff; border-color: #4f46e5; }
   .top-actions .dl:hover { background: #6366f1; }
   .top-actions .rs:hover { border-color: #dc2626; color: #dc2626; }
-  .tabs { display: flex; gap: 0; margin-bottom: 20px; background: #e6e8ec; border-radius: 12px; padding: 4px; width: fit-content; align-items: center; }
+  .tabs { display: flex; gap: 0; margin-bottom: 12px; background: #e6e8ec; border-radius: 12px; padding: 4px; width: fit-content; align-items: center; }
   .tabs button { padding: 10px 28px; border: none; border-radius: 9px; cursor: pointer; font-size: 0.9rem; font-weight: 500; background: transparent; color: #777; transition: all 0.15s; }
   .tabs button.active { background: #fff; color: #111; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
   .tabs button:hover:not(.active) { color: #333; }
+  .subtabs { display: flex; gap: 0; margin-bottom: 16px; background: #f0f1f4; border-radius: 10px; padding: 3px; width: fit-content; align-items: center; flex-wrap: wrap; }
+  .subtabs button { padding: 7px 16px; border: none; border-radius: 7px; cursor: pointer; font-size: 0.8rem; font-weight: 500; background: transparent; color: #888; transition: all 0.15s; white-space: nowrap; }
+  .subtabs button.active { background: #fff; color: #4f46e5; box-shadow: 0 1px 2px rgba(0,0,0,0.06); font-weight: 600; }
+  .subtabs button:hover:not(.active) { color: #555; }
   .cnt { display: flex; gap: 16px; margin-left: 16px; font-size: 0.85rem; color: #888; align-items: center; height: 40px; }
   .cnt .g { color: #16a34a; font-weight: 600; }
   .cnt .r { color: #dc2626; font-weight: 600; }
   .cnt .gr { color: #aaa; }
   .search-box { width: 100%; background: #fff; border: 1px solid #e2e4e8; border-radius: 10px; color: #333; font-size: 0.9rem; padding: 12px 16px; margin-bottom: 20px; transition: border 0.15s; }
   .search-box:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.08); }
-
   .flow { margin-bottom: 18px; background: #fff; border-radius: 14px; border: 1px solid #e8eaee; overflow: hidden; transition: opacity 0.2s, transform 0.2s; }
   .flow.dragging { opacity: 0.4; transform: scale(0.98); }
   .flow.dragover { border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79,70,229,0.15); }
@@ -50,12 +52,10 @@
   .flow-hd .act .edit:hover { color: #4f46e5; background: #eef0ff; }
   .flow-hd .act .del:hover { color: #dc2626; background: #fee2e2; }
   .flow-hd .act .addt:hover { color: #16a34a; background: #dcfce7; }
-
   .case-group { padding: 4px 0; }
   .case-label { padding: 8px 20px 4px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
   .case-label.pos { color: #16a34a; }
   .case-label.neg { color: #dc2626; }
-
   .test { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid #f2f3f6; }
   .test:last-child { border-bottom: none; }
   .test .body { flex: 1; min-width: 0; }
@@ -80,14 +80,10 @@
   .test .btns .edit-btn:hover { color: #4f46e5; background: #eef0ff; }
   .ins-btn { display: flex; align-items: center; justify-content: center; padding: 2px 0; cursor: pointer; color: #ccc; font-size: 0.7rem; transition: all 0.1s; border-bottom: 1px solid #f2f3f6; }
   .ins-btn:hover { color: #4f46e5; background: #f0f0ff; border-color: #4f46e5; }
-  .ins-btn span { padding: 0 8px; }
-
   .undo-bar { display: none; align-items: center; gap: 12px; background: #fff; border: 1px solid #e2e4e8; border-radius: 10px; padding: 10px 16px; margin-bottom: 14px; font-size: 0.85rem; color: #555; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
   .undo-bar.show { display: flex; }
   .undo-bar button { background: #4f46e5; color: #fff; border: none; border-radius: 7px; padding: 6px 16px; cursor: pointer; font-size: 0.8rem; font-weight: 500; margin-left: auto; transition: background 0.12s; }
   .undo-bar button:hover { background: #6366f1; }
-
-  .bar { display: none; }
   .empty { text-align: center; padding: 60px 20px; color: #aaa; font-size: 0.9rem; }
   .sync-status { font-size: 0.75rem; color: #999; margin-left: 8px; }
   .sync-status.syncing { color: #f59e0b; }
@@ -116,6 +112,17 @@
   <button class="active" data-tab="client" onclick="switchTab('client')">📱 Client App</button>
   <button data-tab="admin" onclick="switchTab('admin')">⚙️ Admin App</button>
 </div>
+
+<div class="subtabs" id="subtabs" style="display:none;">
+  <button class="active" data-sub="bar_owner" onclick="switchSubTab('bar_owner')">🏠 Bar Owner</button>
+  <button data-sub="bar_entry" onclick="switchSubTab('bar_entry')">🚪 Bar Entry</button>
+  <button data-sub="bar_waiter" onclick="switchSubTab('bar_waiter')">🍽️ Bar Waiter</button>
+  <button data-sub="dj" onclick="switchSubTab('dj')">🎧 DJ</button>
+  <button data-sub="eventier" onclick="switchSubTab('eventier')">🎉 Eventier</button>
+  <button data-sub="valet_driver" onclick="switchSubTab('valet_driver')">🚗 Valet Driver</button>
+  <button data-sub="valet_manager" onclick="switchSubTab('valet_manager')">📋 Valet Manager</button>
+</div>
+
 <div class="cnt" id="cnt"></div>
 
 <input class="search-box" id="search" placeholder="Search flows or tests..." oninput="render()">
@@ -142,7 +149,9 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 
 function sbHeaders() { return { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }; }
 
-const FLOWS = {
+const ADMIN_SUBS = ['bar_owner','bar_entry','bar_waiter','dj','eventier','valet_driver','valet_manager'];
+
+const DEFAULT_FLOWS = {
   client: [
     { num:"1", flow:"Login", tests:[
       {name:"Login Screen Loads", type:"positive"},{name:"Enter Mobile Number", type:"positive"},{name:"Mobile Number Validation", type:"positive"},{name:"Existing User → Send OTP", type:"positive"},{name:"OTP Verification Screen", type:"positive"},{name:"Valid OTP → Home Dashboard", type:"positive"},{name:"Invalid OTP → Error Message", type:"negative"},{name:"Retry OTP", type:"positive"},{name:"Resend OTP → Generate New OTP", type:"positive"},{name:"Expired OTP → Error + Resend Option", type:"negative"},
@@ -193,23 +202,101 @@ const FLOWS = {
       {name:"Launch App → Skip Login", type:"positive"},{name:"Browse Bars", type:"positive"},{name:"View Events", type:"positive"},{name:"Restricted Actions → Prompt Login", type:"negative"},
     ]},
   ],
-  admin: [
-    { num:"17", flow:"QR Scanning", tests:[
-      {name:"Scan QR", type:"positive"},{name:"Validate QR", type:"positive"},{name:"Valid QR → Success", type:"positive"},{name:"Invalid QR → Error Message", type:"negative"},{name:"Update Dashboard", type:"positive"},
+  bar_owner: [
+    { num:"1", flow:"Dashboard Overview", tests:[
+      {name:"View Revenue Summary", type:"positive"},{name:"View Customer Count", type:"positive"},{name:"View Active Offers", type:"positive"},{name:"View Today's Check-ins", type:"positive"},
     ]},
-    { num:"18", flow:"Bar Entry", tests:[
-      {name:"Customer QR → Bar Entry Scan", type:"positive"},{name:"Validate Entry", type:"positive"},{name:"Allow Entry", type:"positive"},{name:"Update Dashboard", type:"positive"},{name:"Invalid QR → Entry Denied", type:"negative"},
+    { num:"2", flow:"Bar Management", tests:[
+      {name:"Edit Bar Details", type:"positive"},{name:"Update Bar Timings", type:"positive"},{name:"Update Bar Photos", type:"positive"},{name:"Set Bar Location", type:"positive"},
     ]},
-    { num:"19", flow:"Waiter Offer Redemption", tests:[
-      {name:"Customer QR → Waiter Scan", type:"positive"},{name:"Validate Offer", type:"positive"},{name:"Claimed → Success", type:"positive"},{name:"Not Claimed → Error Message", type:"negative"},
+    { num:"3", flow:"Offer Management", tests:[
+      {name:"Create New Offer", type:"positive"},{name:"Edit Existing Offer", type:"positive"},{name:"Delete Offer", type:"positive"},{name:"Set Offer Validity", type:"positive"},{name:"View Offer Analytics", type:"positive"},
+    ]},
+    { num:"4", flow:"Event Management", tests:[
+      {name:"Create New Event", type:"positive"},{name:"Edit Event Details", type:"positive"},{name:"Set Ticket Pricing", type:"positive"},{name:"Cancel Event", type:"negative"},{name:"View Event Bookings", type:"positive"},
+    ]},
+    { num:"5", flow:"Staff Management", tests:[
+      {name:"Add Staff Member", type:"positive"},{name:"Remove Staff Member", type:"positive"},{name:"Assign Roles", type:"positive"},{name:"View Staff Activity", type:"positive"},
+    ]},
+    { num:"6", flow:"Analytics & Reports", tests:[
+      {name:"View Daily Reports", type:"positive"},{name:"View Weekly Reports", type:"positive"},{name:"Export Data", type:"positive"},{name:"View Customer Feedback", type:"positive"},
+    ]},
+  ],
+  bar_entry: [
+    { num:"1", flow:"Customer Entry", tests:[
+      {name:"Scan Customer QR Code", type:"positive"},{name:"Validate QR → Allow Entry", type:"positive"},{name:"Invalid QR → Deny Entry", type:"negative"},{name:"Already Checked In → Message", type:"negative"},{name:"Update Entry Count", type:"positive"},
+    ]},
+    { num:"2", flow:"Queue Management", tests:[
+      {name:"View Queue Status", type:"positive"},{name:"Skip Queue QR Scan", type:"positive"},{name:"VIP Entry", type:"positive"},{name:"Capacity Full → Stop Entry", type:"negative"},
+    ]},
+    { num:"3", flow:"Table Assignment", tests:[
+      {name:"Scan Table QR", type:"positive"},{name:"Assign Table to Customer", type:"positive"},{name:"Table Already Occupied → Error", type:"negative"},{name:"Free Table on Checkout", type:"positive"},
+    ]},
+  ],
+  bar_waiter: [
+    { num:"1", flow:"Offer Redemption", tests:[
+      {name:"Scan Customer Offer QR", type:"positive"},{name:"Validate Offer → Redeem", type:"positive"},{name:"Already Redeemed → Error", type:"negative"},{name:"Expired Offer → Error", type:"negative"},{name:"Update Offer Status", type:"positive"},
+    ]},
+    { num:"2", flow:"Table Service", tests:[
+      {name:"View Assigned Tables", type:"positive"},{name:"Scan Table QR → View Orders", type:"positive"},{name:"Mark Order Delivered", type:"positive"},{name:"Flag Issue to Manager", type:"positive"},
+    ]},
+    { num:"3", flow:"Game Offer Scan", tests:[
+      {name:"Scan Game Won QR", type:"positive"},{name:"Validate Game Offer", type:"positive"},{name:"Redeem Game Offer", type:"positive"},{name:"Invalid Game QR → Error", type:"negative"},
+    ]},
+  ],
+  dj: [
+    { num:"1", flow:"Song Requests", tests:[
+      {name:"View Incoming Song Requests", type:"positive"},{name:"Approve Song → Play", type:"positive"},{name:"Reject Song → Refund Coins", type:"positive"},{name:"View Request Queue", type:"positive"},{name:"No Requests → Empty State", type:"negative"},
+    ]},
+    { num:"2", flow:"Shout-Out Requests", tests:[
+      {name:"View Incoming Shout-Outs", type:"positive"},{name:"Approve Shout-Out → Announce", type:"positive"},{name:"Reject Shout-Out", type:"positive"},{name:"Empty Message → Skip", type:"negative"},
+    ]},
+    { num:"3", flow:"Playlist Control", tests:[
+      {name:"View Current Playlist", type:"positive"},{name:"Add Song to Queue", type:"positive"},{name:"Remove Song from Queue", type:"positive"},{name:"Skip Current Song", type:"positive"},
+    ]},
+  ],
+  eventier: [
+    { num:"1", flow:"Event Setup", tests:[
+      {name:"Create Event → Fill Details", type:"positive"},{name:"Upload Event Banner", type:"positive"},{name:"Set Ticket Types & Pricing", type:"positive"},{name:"Set Event Date & Time", type:"positive"},{name:"Publish Event", type:"positive"},{name:"Save as Draft", type:"positive"},
+    ]},
+    { num:"2", flow:"Booking Management", tests:[
+      {name:"View All Bookings", type:"positive"},{name:"View Booking Details", type:"positive"},{name:"Cancel Booking → Refund", type:"positive"},{name:"Check-in Guest via QR", type:"positive"},{name:"Export Guest List", type:"positive"},
+    ]},
+    { num:"3", flow:"Event Analytics", tests:[
+      {name:"View Ticket Sales", type:"positive"},{name:"View Revenue", type:"positive"},{name:"View Attendance Rate", type:"positive"},
+    ]},
+  ],
+  valet_driver: [
+    { num:"1", flow:"Ride Requests", tests:[
+      {name:"View Incoming Ride Request", type:"positive"},{name:"Accept Ride → Navigate to Customer", type:"positive"},{name:"Reject Ride → Reassign", type:"negative"},{name:"No Requests → Idle State", type:"negative"},
+    ]},
+    { num:"2", flow:"Trip Flow", tests:[
+      {name:"Arrive at Pickup → Notify Customer", type:"positive"},{name:"Start Trip", type:"positive"},{name:"End Trip → Drop Complete", type:"positive"},{name:"Trip Cancelled by Customer", type:"negative"},
+    ]},
+    { num:"3", flow:"Availability", tests:[
+      {name:"Go Online → Accept Rides", type:"positive"},{name:"Go Offline → Stop Rides", type:"positive"},{name:"Auto-Offline After Inactivity", type:"negative"},
+    ]},
+  ],
+  valet_manager: [
+    { num:"1", flow:"Driver Management", tests:[
+      {name:"View All Drivers", type:"positive"},{name:"Approve New Driver", type:"positive"},{name:"Block Driver", type:"negative"},{name:"View Driver Ratings", type:"positive"},
+    ]},
+    { num:"2", flow:"Ride Oversight", tests:[
+      {name:"View Active Rides", type:"positive"},{name:"View Ride History", type:"positive"},{name:"Assign Ride to Driver", type:"positive"},{name:"Cancel Ride", type:"negative"},{name:"Handle Customer Complaint", type:"positive"},
+    ]},
+    { num:"3", flow:"Payout & Reports", tests:[
+      {name:"View Driver Earnings", type:"positive"},{name:"Process Payout", type:"positive"},{name:"View Daily Ride Summary", type:"positive"},{name:"Export Reports", type:"positive"},
     ]},
   ],
 };
 
 let tab = 'client';
+let subTab = 'bar_owner';
 let data = [];
 let undo = null;
 let undoTimer = null;
+
+function dataKey() { return tab === 'client' ? 'client' : subTab; }
 
 function setSyncStatus(status) {
   const el = document.getElementById('syncStatus');
@@ -222,28 +309,29 @@ function setSyncStatus(status) {
 
 async function loadData() {
   setSyncStatus('syncing');
+  const key = dataKey();
   try {
     const res = await fetch(SB_URL + '/rest/v1/abo_data?id=eq.main&select=*', { headers: sbHeaders() });
     const rows = await res.json();
     if (rows && rows.length > 0) {
       const row = rows[0];
-      if (row[tab] && row[tab].length > 0) {
-        data = row[tab];
-        document.getElementById('notesArea').value = (tab === 'client' ? row.notes_client : row.notes_admin) || '';
+      if (row[key] && row[key].length > 0) {
+        data = row[key];
       } else {
-        data = JSON.parse(JSON.stringify(FLOWS[tab]));
-        document.getElementById('notesArea').value = '';
+        data = JSON.parse(JSON.stringify(DEFAULT_FLOWS[key] || []));
         await saveData();
       }
+      const nk = tab === 'client' ? 'notes_client' : 'notes_' + subTab;
+      document.getElementById('notesArea').value = row[nk] || '';
     } else {
-      data = JSON.parse(JSON.stringify(FLOWS[tab]));
+      data = JSON.parse(JSON.stringify(DEFAULT_FLOWS[key] || []));
       document.getElementById('notesArea').value = '';
       await saveData();
     }
     setSyncStatus('synced');
   } catch(e) {
     console.error('Load error:', e);
-    data = JSON.parse(JSON.stringify(FLOWS[tab]));
+    data = JSON.parse(JSON.stringify(DEFAULT_FLOWS[key] || []));
     document.getElementById('notesArea').value = '';
     setSyncStatus('error');
   }
@@ -251,12 +339,13 @@ async function loadData() {
 
 async function saveData() {
   setSyncStatus('syncing');
+  const key = dataKey();
   try {
     const notesVal = document.getElementById('notesArea').value;
     const update = { id: 'main' };
-    update[tab] = data;
-    if (tab === 'client') update.notes_client = notesVal;
-    else update.notes_admin = notesVal;
+    update[key] = data;
+    const nk = tab === 'client' ? 'notes_client' : 'notes_' + subTab;
+    update[nk] = notesVal;
 
     const res = await fetch(SB_URL + '/rest/v1/abo_data?id=eq.main', {
       method: 'PATCH',
@@ -280,6 +369,16 @@ async function switchTab(t) {
   tab = t;
   clearUndo();
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  document.getElementById('subtabs').style.display = t === 'admin' ? 'flex' : 'none';
+  document.getElementById('search').value = '';
+  await loadData();
+  render();
+}
+
+async function switchSubTab(st) {
+  subTab = st;
+  clearUndo();
+  document.querySelectorAll('#subtabs button').forEach(b => b.classList.toggle('active', b.dataset.sub === st));
   document.getElementById('search').value = '';
   await loadData();
   render();
@@ -294,20 +393,20 @@ function removeTest(fi, ti) {
   if (!confirm('Delete "' + name + '"?')) return;
   const snap = JSON.parse(JSON.stringify(data));
   data[fi].tests.splice(ti, 1);
-  if (data[fi].tests.length === 0) { data.splice(fi, 1); undo = { snapshot: snap, tab }; save(); render(); showUndo('Deleted flow "' + snap[fi].flow + '"'); return; }
-  undo = { snapshot: snap, tab }; save(); render(); showUndo('Deleted "' + name + '"');
+  if (data[fi].tests.length === 0) { data.splice(fi, 1); undo = { snapshot: snap }; save(); render(); showUndo('Deleted flow "' + snap[fi].flow + '"'); return; }
+  undo = { snapshot: snap }; save(); render(); showUndo('Deleted "' + name + '"');
 }
 
 function removeFlow(fi) {
   if (!confirm('Delete flow "' + data[fi].flow + '" and all its tests?')) return;
   const snap = JSON.parse(JSON.stringify(data));
   data.splice(fi, 1);
-  undo = { snapshot: snap, tab }; save(); render(); showUndo('Deleted flow "' + snap[fi].flow + '"');
+  undo = { snapshot: snap }; save(); render(); showUndo('Deleted flow "' + snap[fi].flow + '"');
 }
 
-function showUndo(msg) { clearTimeout(undoTimer); document.getElementById('undoMsg').textContent = msg; document.getElementById('undoBar').classList.add('show'); undoTimer = setTimeout(() => { document.getElementById('undoBar').classList.remove('show'); if (undo && undo.tab === tab) undo = null; }, 10000); }
+function showUndo(msg) { clearTimeout(undoTimer); document.getElementById('undoMsg').textContent = msg; document.getElementById('undoBar').classList.add('show'); undoTimer = setTimeout(() => { document.getElementById('undoBar').classList.remove('show'); undo = null; }, 10000); }
 
-function undoDelete() { if (!undo || undo.tab !== tab) return; data = JSON.parse(JSON.stringify(undo.snapshot)); undo = null; clearTimeout(undoTimer); document.getElementById('undoBar').classList.remove('show'); save(); render(); }
+function undoDelete() { if (!undo) return; data = JSON.parse(JSON.stringify(undo.snapshot)); undo = null; clearTimeout(undoTimer); document.getElementById('undoBar').classList.remove('show'); save(); render(); }
 
 function editTestName(fi, ti) {
   const cur = data[fi].tests[ti].name;
@@ -356,7 +455,7 @@ function addFlow() {
 function reset() {
   if (!confirm('Reset all tests to defaults?')) return;
   clearUndo();
-  data = JSON.parse(JSON.stringify(FLOWS[tab]));
+  data = JSON.parse(JSON.stringify(DEFAULT_FLOWS[dataKey()] || []));
   save(); render();
 }
 
@@ -431,7 +530,6 @@ function render() {
   filtered.forEach((f) => {
     let idx = data.findIndex(d => d.flow === f.flow && d.num === f.num);
     if (idx < 0) idx = 0;
-
     const pos = f.tests.filter(t => t.type !== 'negative');
     const neg = f.tests.filter(t => t.type === 'negative');
 
@@ -470,13 +568,13 @@ function render() {
       });
       html += '</div>';
     }
-
     html += '</div>';
   });
 
   el.innerHTML = html;
   document.getElementById('cnt').innerHTML = '<span class="g">✓ ' + pass + '</span><span class="r">✗ ' + fail + '</span><span class="gr">— ' + (total - pass - fail) + '</span><span>| ' + total + '</span>';
-  document.title = 'ABO ' + (tab === 'client' ? 'Client' : 'Admin') + ' (' + pass + '/' + total + ')';
+  const label = tab === 'client' ? 'Client' : subTab.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  document.title = 'ABO ' + label + ' (' + pass + '/' + total + ')';
 }
 
 function renderTest(t, fi, ti) {
@@ -495,65 +593,37 @@ function renderTest(t, fi, ti) {
 }
 
 function download() {
-  const appName = tab === 'client' ? 'Client App' : 'Admin App';
+  const label = tab === 'client' ? 'Client App' : subTab.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   const date = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   let pass = 0, fail = 0, total = 0;
   data.forEach(f => f.tests.forEach(t => { total++; if (t.status === 'pass') pass++; else if (t.status === 'fail') fail++; }));
 
-  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ABO Test Report — ' + appName + '</title>';
+  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ABO Test Report — ' + label + '</title>';
   html += '<style>';
-  html += 'body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #111; }';
-  html += 'h1 { font-size: 1.5rem; margin-bottom: 4px; }';
-  html += '.sub { color: #888; font-size: 0.85rem; margin-bottom: 24px; }';
-  html += '.summary { display: flex; gap: 24px; margin-bottom: 28px; padding: 16px 20px; background: #f8f9fb; border-radius: 10px; border: 1px solid #e8eaee; }';
-  html += '.summary div { font-size: 0.9rem; }';
-  html += '.summary .g { color: #16a34a; font-weight: 600; }';
-  html += '.summary .r { color: #dc2626; font-weight: 600; }';
-  html += '.summary .gr { color: #888; }';
-  html += '.flow { margin-bottom: 20px; border: 1px solid #e8eaee; border-radius: 10px; overflow: hidden; }';
-  html += '.flow-hd { background: #f8f9fb; padding: 10px 16px; font-weight: 600; font-size: 0.95rem; border-bottom: 1px solid #e8eaee; }';
-  html += '.pos-label { padding: 6px 16px 2px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: #16a34a; font-weight: 600; }';
-  html += '.neg-label { padding: 6px 16px 2px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: #dc2626; font-weight: 600; }';
-  html += '.test { display: flex; align-items: center; gap: 10px; padding: 7px 16px; border-bottom: 1px solid #f2f3f6; font-size: 0.88rem; }';
-  html += '.test:last-child { border-bottom: none; }';
-  html += '.test .name { flex: 1; }';
-  html += '.test .s { font-size: 0.75rem; font-weight: 600; padding: 2px 10px; border-radius: 10px; flex-shrink: 0; }';
-  html += '.s.pass { background: #dcfce7; color: #16a34a; }';
-  html += '.s.fail { background: #fee2e2; color: #dc2626; }';
-  html += '.s.na { background: #f2f2f2; color: #999; }';
-  html += '.test .notes { font-size: 0.75rem; color: #888; margin-left: 12px; }';
-  html += '.footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid #e8eaee; font-size: 0.8rem; color: #888; text-align: center; }';
-  html += '@media print { body { margin: 20px; } .no-print { display: none; } }';
-  html += '</style></head><body>';
-  html += '<h1>ABO Test Report — ' + appName + '</h1>';
-  html += '<div class="sub">' + date + '</div>';
-  html += '<div class="summary">';
-  html += '<div><span class="g">✓ Passed:</span> ' + pass + '</div>';
-  html += '<div><span class="r">✗ Failed:</span> ' + fail + '</div>';
-  html += '<div><span class="gr">— Untested:</span> ' + (total - pass - fail) + '</div>';
-  html += '<div><strong>Total:</strong> ' + total + '</div>';
-  html += '</div>';
+  html += 'body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#111}';
+  html += 'h1{font-size:1.5rem;margin-bottom:4px}.sub{color:#888;font-size:.85rem;margin-bottom:24px}';
+  html += '.summary{display:flex;gap:24px;margin-bottom:28px;padding:16px 20px;background:#f8f9fb;border-radius:10px;border:1px solid #e8eaee}';
+  html += '.summary div{font-size:.9rem}.summary .g{color:#16a34a;font-weight:600}.summary .r{color:#dc2626;font-weight:600}.summary .gr{color:#888}';
+  html += '.flow{margin-bottom:20px;border:1px solid #e8eaee;border-radius:10px;overflow:hidden}';
+  html += '.flow-hd{background:#f8f9fb;padding:10px 16px;font-weight:600;font-size:.95rem;border-bottom:1px solid #e8eaee}';
+  html += '.pos-label{padding:6px 16px 2px;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;color:#16a34a;font-weight:600}';
+  html += '.neg-label{padding:6px 16px 2px;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;color:#dc2626;font-weight:600}';
+  html += '.test{display:flex;align-items:center;gap:10px;padding:7px 16px;border-bottom:1px solid #f2f3f6;font-size:.88rem}';
+  html += '.test:last-child{border-bottom:none}.test .name{flex:1}';
+  html += '.test .s{font-size:.75rem;font-weight:600;padding:2px 10px;border-radius:10px;flex-shrink:0}';
+  html += '.s.pass{background:#dcfce7;color:#16a34a}.s.fail{background:#fee2e2;color:#dc2626}.s.na{background:#f2f2f2;color:#999}';
+  html += '.test .notes{font-size:.75rem;color:#888;margin-left:12px}';
+  html += '.footer{margin-top:28px;padding-top:16px;border-top:1px solid #e8eaee;font-size:.8rem;color:#888;text-align:center}';
+  html += '@media print{body{margin:20px}.no-print{display:none}}</style></head><body>';
+  html += '<h1>ABO Test Report — ' + label + '</h1><div class="sub">' + date + '</div>';
+  html += '<div class="summary"><div><span class="g">✓ Passed:</span> ' + pass + '</div><div><span class="r">✗ Failed:</span> ' + fail + '</div><div><span class="gr">— Untested:</span> ' + (total - pass - fail) + '</div><div><strong>Total:</strong> ' + total + '</div></div>';
 
   data.forEach(f => {
-    html += '<div class="flow"><div class="flow-hd">' + f.num + '. ' + f.flow + ' <span style="font-weight:400;color:#888;font-size:0.8rem;">(' + f.tests.length + ')</span></div>';
+    html += '<div class="flow"><div class="flow-hd">' + f.num + '. ' + f.flow + ' <span style="font-weight:400;color:#888;font-size:.8rem;">(' + f.tests.length + ')</span></div>';
     const pos = f.tests.filter(t => t.type !== 'negative');
     const neg = f.tests.filter(t => t.type === 'negative');
-    if (pos.length) {
-      html += '<div class="pos-label">✓ Positive Cases</div>';
-      pos.forEach(t => {
-        const s = t.status === 'pass' ? 'pass' : t.status === 'fail' ? 'fail' : 'na';
-        const sl = t.status === 'pass' ? 'PASS' : t.status === 'fail' ? 'FAIL' : 'NOT TESTED';
-        html += '<div class="test"><span class="name">' + t.name + '</span><span class="s ' + s + '">' + sl + '</span>' + (t.desc ? '<span class="notes">' + t.desc + '</span>' : '') + '</div>';
-      });
-    }
-    if (neg.length) {
-      html += '<div class="neg-label">✗ Negative Cases</div>';
-      neg.forEach(t => {
-        const s = t.status === 'pass' ? 'pass' : t.status === 'fail' ? 'fail' : 'na';
-        const sl = t.status === 'pass' ? 'PASS' : t.status === 'fail' ? 'FAIL' : 'NOT TESTED';
-        html += '<div class="test"><span class="name">' + t.name + '</span><span class="s ' + s + '">' + sl + '</span>' + (t.desc ? '<span class="notes">' + t.desc + '</span>' : '') + '</div>';
-      });
-    }
+    if (pos.length) { html += '<div class="pos-label">✓ Positive Cases</div>'; pos.forEach(t => { const s2 = t.status === 'pass' ? 'pass' : t.status === 'fail' ? 'fail' : 'na'; const sl = t.status === 'pass' ? 'PASS' : t.status === 'fail' ? 'FAIL' : 'NOT TESTED'; html += '<div class="test"><span class="name">' + t.name + '</span><span class="s ' + s2 + '">' + sl + '</span>' + (t.desc ? '<span class="notes">' + t.desc + '</span>' : '') + '</div>'; }); }
+    if (neg.length) { html += '<div class="neg-label">✗ Negative Cases</div>'; neg.forEach(t => { const s2 = t.status === 'pass' ? 'pass' : t.status === 'fail' ? 'fail' : 'na'; const sl = t.status === 'pass' ? 'PASS' : t.status === 'fail' ? 'FAIL' : 'NOT TESTED'; html += '<div class="test"><span class="name">' + t.name + '</span><span class="s ' + s2 + '">' + sl + '</span>' + (t.desc ? '<span class="notes">' + t.desc + '</span>' : '') + '</div>'; }); }
     html += '</div>';
   });
 
