@@ -154,9 +154,53 @@
   .login-card button.login-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
   .login-card .login-err { color: var(--red); font-size: 0.8rem; margin-top: 12px; display: none; }
   .login-card .login-err.show { display: block; }
+
+  .priority-sel { padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); font-size: 0.72rem; font-family: inherit; cursor: pointer; font-weight: 500; width: 90px; }
+  .priority-sel:focus { outline: none; border-color: var(--accent); }
+  .priority-sel option { background: var(--bg2); color: var(--text); }
+  .priority-high { color: #dc2626; font-weight: 600; }
+  .priority-medium { color: #f59e0b; font-weight: 600; }
+  .priority-low { color: #16a34a; font-weight: 600; }
+  .priority-blocking { color: #7c3aed; font-weight: 600; }
+
+  .flow-hd .act .dup:hover { color: var(--accent); background: var(--accent3); }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 999; }
+  .modal-overlay.hidden { display: none; }
+  .modal-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 32px 36px; width: 420px; box-shadow: var(--shadow); }
+  .modal-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; color: var(--text); }
+  .modal-card label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text2); margin-bottom: 4px; margin-top: 12px; }
+  .modal-card label:first-of-type { margin-top: 0; }
+  .modal-card input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg3); color: var(--text); font-size: 0.88rem; font-family: inherit; }
+  .modal-card input:focus { outline: none; border-color: var(--accent); }
+  .modal-card .modal-actions { display: flex; gap: 10px; margin-top: 22px; justify-content: flex-end; }
+  .modal-card .modal-actions button { padding: 9px 22px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 600; font-family: inherit; transition: all 0.2s; }
+  .modal-card .modal-actions .cancel { background: var(--bg5); color: var(--text2); }
+  .modal-card .modal-actions .confirm { background: var(--accentgrad); color: #fff; }
+  .modal-card .modal-actions .confirm:hover { filter: brightness(1.1); }
 </style>
 </head>
 <body>
+
+<div class="modal-overlay hidden" id="metaModal">
+  <div class="modal-card">
+    <h3>Test Report Details</h3>
+    <label>Testing Bar Name</label>
+    <input type="text" id="metaBar" placeholder="e.g. Sky Lounge">
+    <label>Version</label>
+    <input type="text" id="metaVersion" placeholder="e.g. v2.1.0">
+    <label>Environment</label>
+    <input type="text" id="metaEnv" placeholder="e.g. Staging / Production">
+    <label>Performed By</label>
+    <input type="text" id="metaTester" placeholder="e.g. John Doe">
+    <label>Date</label>
+    <input type="date" id="metaDate">
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeMetaModal()">Cancel</button>
+      <button class="confirm" onclick="confirmDownloadAll()">Generate Report</button>
+    </div>
+  </div>
+</div>
 
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card">
@@ -181,14 +225,17 @@
     <button class="rs" onclick="doLogout()" title="Logout">🚪 Logout</button>
     <button onclick="addFlow()">+ Flow</button>
     <button class="dl" onclick="download()">⬇ Download</button>
+    <button class="dl" onclick="downloadAll()" style="background:linear-gradient(135deg,#16a34a,#22c55e);">📋 Download All</button>
     <button class="rs" onclick="clearStatus()">Clear Status</button>
-    <button class="rs" onclick="reset()">Reset</button>
   </div>
 </div>
 
 <div class="tabs" id="tabs">
   <button class="active" data-tab="client" onclick="switchTab('client')">📱 Client App</button>
   <button data-tab="admin" onclick="switchTab('admin')">⚙️ Admin App</button>
+  <button data-tab="client_web_admin" onclick="switchTab('client_web_admin')">🌐 Client Web Admin</button>
+  <button data-tab="super_admin" onclick="switchTab('super_admin')">👑 Super Admin</button>
+  <button data-tab="abo_backend" onclick="switchTab('abo_backend')">🔧 ABO Backend</button>
 </div>
 
 <div class="subtabs" id="subtabs" style="display:none;">
@@ -425,6 +472,63 @@ const DEFAULT_FLOWS = {
       {name:"View Driver Earnings", type:"positive"},{name:"Process Payout", type:"positive"},{name:"View Daily Ride Summary", type:"positive"},{name:"Export Reports", type:"positive"},
     ]},
   ],
+  client_web_admin: [
+    { num:"1", flow:"Login & Authentication", tests:[
+      {name:"Web Login Page Loads", type:"positive"},{name:"Enter Credentials", type:"positive"},{name:"Valid Login → Dashboard", type:"positive"},{name:"Invalid Credentials → Error", type:"negative"},{name:"Session Timeout → Re-login", type:"negative"},{name:"Logout", type:"positive"},
+    ]},
+    { num:"2", flow:"User Management", tests:[
+      {name:"View All Users", type:"positive"},{name:"Search Users", type:"positive"},{name:"Filter by Status", type:"positive"},{name:"View User Details", type:"positive"},{name:"Block User", type:"negative"},{name:"Unblock User", type:"positive"},{name:"Delete User", type:"negative"},
+    ]},
+    { num:"3", flow:"Bar Management", tests:[
+      {name:"View All Bars", type:"positive"},{name:"Add New Bar", type:"positive"},{name:"Edit Bar Details", type:"positive"},{name:"Deactivate Bar", type:"negative"},{name:"View Bar Analytics", type:"positive"},
+    ]},
+    { num:"4", flow:"Offers & Promotions", tests:[
+      {name:"View All Offers", type:"positive"},{name:"Create New Offer", type:"positive"},{name:"Edit Offer", type:"positive"},{name:"Delete Offer", type:"negative"},{name:"Assign Offer to Bar", type:"positive"},{name:"Offer Status Toggle", type:"positive"},
+    ]},
+    { num:"5", flow:"Reports & Analytics", tests:[
+      {name:"View Dashboard", type:"positive"},{name:"Filter by Date Range", type:"positive"},{name:"Export Report as PDF", type:"positive"},{name:"Export Report as CSV", type:"positive"},{name:"View Revenue Report", type:"positive"},{name:"View User Activity Report", type:"positive"},
+    ]},
+  ],
+  super_admin: [
+    { num:"1", flow:"System Login & Access", tests:[
+      {name:"Super Admin Login", type:"positive"},{name:"2FA Verification", type:"positive"},{name:"Invalid 2FA → Error", type:"negative"},{name:"Access Control Check", type:"positive"},{name:"Session Management", type:"positive"},
+    ]},
+    { num:"2", flow:"Organization Management", tests:[
+      {name:"View All Organizations", type:"positive"},{name:"Add Organization", type:"positive"},{name:"Edit Organization", type:"positive"},{name:"Deactivate Organization", type:"negative"},{name:"View Org Details", type:"positive"},{name:"Assign Admin to Org", type:"positive"},
+    ]},
+    { num:"3", flow:"Platform Settings", tests:[
+      {name:"View Platform Settings", type:"positive"},{name:"Update App Config", type:"positive"},{name:"Manage Payment Gateways", type:"positive"},{name:"Manage Notification Templates", type:"positive"},{name:"Update Terms & Privacy Policy", type:"positive"},
+    ]},
+    { num:"4", flow:"Revenue & Finance", tests:[
+      {name:"View Total Revenue", type:"positive"},{name:"View Revenue by Bar", type:"positive"},{name:"View Commission Settings", type:"positive"},{name:"Update Commission Rate", type:"positive"},{name:"View Payout History", type:"positive"},{name:"Process Manual Payout", type:"positive"},
+    ]},
+    { num:"5", flow:"Audit Logs", tests:[
+      {name:"View Audit Logs", type:"positive"},{name:"Filter by User", type:"positive"},{name:"Filter by Action Type", type:"positive"},{name:"Export Audit Logs", type:"positive"},{name:"View Log Details", type:"positive"},
+    ]},
+    { num:"6", flow:"Support & Escalations", tests:[
+      {name:"View Support Tickets", type:"positive"},{name:"Assign Ticket", type:"positive"},{name:"Resolve Ticket", type:"positive"},{name:"Escalate Ticket", type:"negative"},{name:"View Ticket History", type:"positive"},{name:"Send Reply to User", type:"positive"},
+    ]},
+  ],
+  abo_backend: [
+    { num:"1", flow:"API Health & Status", tests:[
+      {name:"Health Check Endpoint", type:"positive"},{name:"API Version Check", type:"positive"},{name:"Database Connection Status", type:"positive"},{name:"Cache Status", type:"positive"},{name:"Service Status Dashboard", type:"positive"},
+    ]},
+    { num:"2", flow:"User Data Management", tests:[
+      {name:"Fetch All Users", type:"positive"},{name:"Fetch User by ID", type:"positive"},{name:"Update User Data", type:"positive"},{name:"Delete User Data", type:"negative"},{name:"Bulk User Import", type:"positive"},{name:"User Data Export", type:"positive"},
+    ]},
+    { num:"3", flow:"Bar & Venue Management", tests:[
+      {name:"Create Bar via API", type:"positive"},{name:"Update Bar Details", type:"positive"},{name:"Delete Bar", type:"negative"},{name:"Manage Bar Tables", type:"positive"},{name:"Manage Bar Offers", type:"positive"},{name:"Bar Location Update", type:"positive"},
+    ]},
+    { num:"4", flow:"Payment & Transactions", tests:[
+      {name:"Initiate Payment", type:"positive"},{name:"Payment Webhook Received", type:"positive"},{name:"Transaction History", type:"positive"},{name:"Refund Processing", type:"negative"},{name:"Payment Reconciliation", type:"positive"},{name:"Failed Payment Retry", type:"negative"},
+    ]},
+    { num:"5", flow:"Notification System", tests:[
+      {name:"Send Push Notification", type:"positive"},{name:"Send SMS", type:"positive"},{name:"Send Email", type:"positive"},{name:"Notification Queue Status", type:"positive"},{name:"Failed Notification Retry", type:"negative"},{name:"Notification History", type:"positive"},
+    ]},
+    { num:"6", flow:"Event Management API", tests:[
+      {name:"Create Event via API", type:"positive"},{name:"Update Event", type:"positive"},{name:"Delete Event", type:"negative"},{name:"Manage Event Tickets", type:"positive"},{name:"Event Check-in API", type:"positive"},{name:"Event Analytics API", type:"positive"},
+    ]},
+  ],
 };
 
 let tab = 'client';
@@ -433,7 +537,10 @@ let data = [];
 let undo = null;
 let undoTimer = null;
 
-function dataKey() { return tab === 'client' ? 'client' : subTab; }
+function dataKey() {
+  if (tab === 'client' || tab === 'client_web_admin' || tab === 'super_admin' || tab === 'abo_backend') return tab;
+  return subTab;
+}
 
 function setSyncStatus(status) {
   const el = document.getElementById('syncStatus');
@@ -458,7 +565,7 @@ async function loadData() {
         data = JSON.parse(JSON.stringify(DEFAULT_FLOWS[key] || []));
         await saveData();
       }
-      const nk = tab === 'client' ? 'notes_client' : 'notes_' + subTab;
+      const nk = 'notes_' + dataKey();
       document.getElementById('notesArea').value = row[nk] || '';
     } else {
       data = JSON.parse(JSON.stringify(DEFAULT_FLOWS[key] || []));
@@ -481,7 +588,7 @@ async function saveData() {
     const notesVal = document.getElementById('notesArea').value;
     const update = { id: 'main' };
     update[key] = data;
-    const nk = tab === 'client' ? 'notes_client' : 'notes_' + subTab;
+    const nk = 'notes_' + dataKey();
     update[nk] = notesVal;
 
     const res = await fetch(SB_URL + '/rest/v1/abo_data', {
@@ -597,11 +704,21 @@ function addFlow() {
   save(); render();
 }
 
-function reset() {
-  if (!confirm('Reset all tests to defaults?')) return;
+function duplicateFlow(idx) {
   clearUndo();
-  data = JSON.parse(JSON.stringify(DEFAULT_FLOWS[dataKey()] || []));
+  const orig = data[idx];
+  const dup = JSON.parse(JSON.stringify(orig));
+  dup.flow = orig.flow + ' (Copy)';
+  const maxNum = data.reduce((m, f) => Math.max(m, parseInt(f.num) || 0), 0);
+  dup.num = String(maxNum + 1);
+  dup.tests.forEach(t => { t.status = ''; t.priority = ''; });
+  data.push(dup);
   save(); render();
+}
+
+function setPriority(fi, ti, val) {
+  data[fi].tests[ti].priority = val;
+  save();
 }
 
 function clearStatus() {
@@ -694,6 +811,7 @@ function render() {
     html += '<button class="edit" onclick="toggleCollapse(' + idx + ')" title="Minimize">' + (collapsed.has(idx) ? '▸' : '▾') + '</button>';
     html += '<button class="addt" onclick="addTest(' + idx + ', \'positive\')" title="Add positive test">+</button>';
     html += '<button class="addt" onclick="addTest(' + idx + ', \'negative\')" title="Add negative test">−</button>';
+    html += '<button class="dup" onclick="duplicateFlow(' + idx + ')" title="Duplicate flow">⧉</button>';
     html += '<button class="edit" onclick="editFlowName(' + idx + ')" title="Edit flow">✎</button>';
     html += '<button class="del" onclick="removeFlow(' + idx + ')" title="Delete flow">✕</button>';
     html += '<button class="edit" onclick="moveFlow(' + idx + ',-1)" title="Move up">▲</button>';
@@ -732,11 +850,19 @@ function render() {
 
 function renderTest(t, fi, ti) {
   const s = t.status || '';
+  const p = t.priority || '';
   let h = '<div class="test"><div class="body">';
   h += '<div class="label" onclick="toggleNote(' + fi + ',' + ti + ')">' + t.name + '</div>';
   h += '<div class="note" id="n_' + fi + '_' + ti + '">';
   h += '<textarea placeholder="Notes..." oninput="updateNote(' + fi + ',' + ti + ', this.value)">' + (t.desc || '') + '</textarea>';
   h += '</div></div><div class="btns">';
+  h += '<select class="priority-sel" onchange="setPriority(' + fi + ',' + ti + ', this.value)" title="Priority">';
+  h += '<option value=""' + (p === '' ? ' selected' : '') + '>Priority</option>';
+  h += '<option value="high"' + (p === 'high' ? ' selected' : '') + '>🔴 High</option>';
+  h += '<option value="medium"' + (p === 'medium' ? ' selected' : '') + '>🟡 Medium</option>';
+  h += '<option value="low"' + (p === 'low' ? ' selected' : '') + '>🟢 Low</option>';
+  h += '<option value="blocking"' + (p === 'blocking' ? ' selected' : '') + '>🟣 Blocking</option>';
+  h += '</select>';
   h += '<button class="ok ' + (s === 'pass' ? 'on' : '') + '" onclick="setStatus(' + fi + ',' + ti + ', \'pass\')" title="Pass">✓</button>';
   h += '<button class="no ' + (s === 'fail' ? 'on' : '') + '" onclick="setStatus(' + fi + ',' + ti + ', \'fail\')" title="Fail">✗</button>';
   h += '<button class="edit-btn" onclick="editTestName(' + fi + ',' + ti + ')" title="Edit name">✎</button>';
@@ -746,48 +872,142 @@ function renderTest(t, fi, ti) {
 }
 
 function download() {
-  const label = tab === 'client' ? 'Client App' : subTab.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const label = getTabLabel();
   const date = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  let pass = 0, fail = 0, total = 0;
-  data.forEach(f => f.tests.forEach(t => { total++; if (t.status === 'pass') pass++; else if (t.status === 'fail') fail++; }));
-
-  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ABO Test Report — ' + label + '</title>';
-  html += '<style>';
-  html += 'body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#111}';
-  html += 'h1{font-size:1.5rem;margin-bottom:4px}.sub{color:#888;font-size:.85rem;margin-bottom:24px}';
-  html += '.summary{display:flex;gap:24px;margin-bottom:28px;padding:16px 20px;background:#f8f9fb;border-radius:10px;border:1px solid #e8eaee}';
-  html += '.summary div{font-size:.9rem}.summary .g{color:#16a34a;font-weight:600}.summary .r{color:#dc2626;font-weight:600}.summary .gr{color:#888}';
-  html += '.flow{margin-bottom:20px;border:1px solid #e8eaee;border-radius:10px;overflow:hidden}';
-  html += '.flow-hd{background:#f8f9fb;padding:10px 16px;font-weight:600;font-size:.95rem;border-bottom:1px solid #e8eaee}';
-  html += '.pos-label{padding:6px 16px 2px;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;color:#16a34a;font-weight:600}';
-  html += '.neg-label{padding:6px 16px 2px;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;color:#dc2626;font-weight:600}';
-  html += '.test{display:flex;align-items:center;gap:10px;padding:7px 16px;border-bottom:1px solid #f2f3f6;font-size:.88rem}';
-  html += '.test:last-child{border-bottom:none}.test .name{flex:1}';
-  html += '.test .s{font-size:.75rem;font-weight:600;padding:2px 10px;border-radius:10px;flex-shrink:0}';
-  html += '.s.pass{background:#dcfce7;color:#16a34a}.s.fail{background:#fee2e2;color:#dc2626}.s.na{background:#f2f2f2;color:#999}';
-  html += '.test .notes{font-size:.75rem;color:#888;margin-left:12px}';
-  html += '.footer{margin-top:28px;padding-top:16px;border-top:1px solid #e8eaee;font-size:.8rem;color:#888;text-align:center}';
-  html += '@media print{body{margin:20px}.no-print{display:none}}</style></head><body>';
-  html += '<h1>ABO Test Report — ' + label + '</h1><div class="sub">' + date + '</div>';
-  html += '<div class="summary"><div><span class="g">✓ Passed:</span> ' + pass + '</div><div><span class="r">✗ Failed:</span> ' + fail + '</div><div><span class="gr">— Untested:</span> ' + (total - pass - fail) + '</div><div><strong>Total:</strong> ' + total + '</div></div>';
-
-  data.forEach(f => {
-    html += '<div class="flow"><div class="flow-hd">' + f.num + '. ' + f.flow + ' <span style="font-weight:400;color:#888;font-size:.8rem;">(' + f.tests.length + ')</span></div>';
-    const pos = f.tests.filter(t => t.type !== 'negative');
-    const neg = f.tests.filter(t => t.type === 'negative');
-    if (pos.length) { html += '<div class="pos-label">✓ Positive Cases</div>'; pos.forEach(t => { const s2 = t.status === 'pass' ? 'pass' : t.status === 'fail' ? 'fail' : 'na'; const sl = t.status === 'pass' ? 'PASS' : t.status === 'fail' ? 'FAIL' : 'NOT TESTED'; html += '<div class="test"><span class="name">' + t.name + '</span><span class="s ' + s2 + '">' + sl + '</span>' + (t.desc ? '<span class="notes">' + t.desc + '</span>' : '') + '</div>'; }); }
-    if (neg.length) { html += '<div class="neg-label">✗ Negative Cases</div>'; neg.forEach(t => { const s2 = t.status === 'pass' ? 'pass' : t.status === 'fail' ? 'fail' : 'na'; const sl = t.status === 'pass' ? 'PASS' : t.status === 'fail' ? 'FAIL' : 'NOT TESTED'; html += '<div class="test"><span class="name">' + t.name + '</span><span class="s ' + s2 + '">' + sl + '</span>' + (t.desc ? '<span class="notes">' + t.desc + '</span>' : '') + '</div>'; }); }
-    html += '</div>';
-  });
-
-  html += '<div class="footer">Generated by ABO Test Sheet</div>';
-  html += '<div class="no-print" style="text-align:center;margin-top:16px;"><button onclick="window.print()" style="padding:10px 28px;border-radius:8px;border:1px solid #4f46e5;background:#4f46e5;color:#fff;font-size:1rem;cursor:pointer;">📄 Save as PDF</button></div>';
-  html += '</body></html>';
-
+  const report = generateReportHTML([{ label, data }], date, {});
   const w = window.open('', '_blank');
-  w.document.write(html);
+  w.document.write(report);
   w.document.close();
 }
+
+function downloadAll() {
+  document.getElementById('metaDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('metaModal').classList.remove('hidden');
+}
+function closeMetaModal() { document.getElementById('metaModal').classList.add('hidden'); }
+
+async function confirmDownloadAll() {
+  const meta = {
+    bar: document.getElementById('metaBar').value || 'N/A',
+    version: document.getElementById('metaVersion').value || 'N/A',
+    env: document.getElementById('metaEnv').value || 'N/A',
+    tester: document.getElementById('metaTester').value || 'N/A',
+    date: document.getElementById('metaDate').value || new Date().toLocaleDateString('en-IN'),
+  };
+  closeMetaModal();
+
+  const allTabs = [
+    { key: 'client', label: 'Client App' },
+    { key: 'admin', label: 'Admin App', subs: ADMIN_SUBS },
+    { key: 'client_web_admin', label: 'Client Web Admin' },
+    { key: 'super_admin', label: 'Super Admin' },
+    { key: 'abo_backend', label: 'ABO Backend' },
+  ];
+
+  const res = await fetch(SB_URL + '/rest/v1/abo_data?id=eq.main&select=*', { headers: sbHeaders() });
+  const rows = await res.json();
+  const row = rows && rows.length > 0 ? rows[0] : {};
+
+  let sections = [];
+  for (const t of allTabs) {
+    if (t.subs) {
+      for (const sub of t.subs) {
+        const d = row[sub] || DEFAULT_FLOWS[sub] || [];
+        if (d.length > 0) sections.push({ label: t.label + ' — ' + sub.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), data: d });
+      }
+    } else {
+      const d = row[t.key] || DEFAULT_FLOWS[t.key] || [];
+      if (d.length > 0) sections.push({ label: t.label, data: d });
+    }
+  }
+
+  const report = generateReportHTML(sections, meta.date, meta);
+  const w = window.open('', '_blank');
+  w.document.write(report);
+  w.document.close();
+}
+
+function getTabLabel() {
+  if (tab === 'client') return 'Client App';
+  if (tab === 'client_web_admin') return 'Client Web Admin';
+  if (tab === 'super_admin') return 'Super Admin';
+  if (tab === 'abo_backend') return 'ABO Backend';
+  return 'Admin — ' + subTab.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function generateReportHTML(sections, dateStr, meta) {
+  let totalPass = 0, totalFail = 0, totalTests = 0;
+  sections.forEach(s => s.data.forEach(f => f.tests.forEach(t => { totalTests++; if (t.status === 'pass') totalPass++; else if (t.status === 'fail') totalFail++; })));
+
+  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ABO Full Test Report</title>';
+  html += '<style>';
+  html += 'body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:900px;margin:40px auto;padding:0 20px;color:#111;line-height:1.5}';
+  html += 'h1{font-size:1.6rem;margin-bottom:2px;color:#1a1a2e}h2{font-size:1.15rem;margin:28px 0 10px;color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:6px}';
+  html += '.meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;margin:16px 0 24px;padding:16px 20px;background:#f0f0ff;border-radius:10px;border:1px solid #d0d0e8;font-size:.88rem}';
+  html += '.meta span{color:#666}.meta strong{color:#111}';
+  html += '.summary{display:flex;gap:24px;margin-bottom:28px;padding:16px 20px;background:#f8f9fb;border-radius:10px;border:1px solid #e8eaee}';
+  html += '.summary div{font-size:.9rem}.summary .g{color:#16a34a;font-weight:600}.summary .r{color:#dc2626;font-weight:600}.summary .gr{color:#888}';
+  html += '.flow{margin-bottom:18px;border:1px solid #e8eaee;border-radius:10px;overflow:hidden;page-break-inside:avoid}';
+  html += '.flow-hd{background:#f8f9fb;padding:10px 16px;font-weight:600;font-size:.92rem;border-bottom:1px solid #e8eaee}';
+  html += '.pos-label,.neg-label{padding:6px 16px 2px;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;font-weight:600}';
+  html += '.pos-label{color:#16a34a}.neg-label{color:#dc2626}';
+  html += '.test{display:flex;align-items:center;gap:10px;padding:7px 16px;border-bottom:1px solid #f2f3f6;font-size:.85rem}';
+  html += '.test:last-child{border-bottom:none}.test .name{flex:1}';
+  html += '.test .s{font-size:.72rem;font-weight:600;padding:2px 10px;border-radius:10px;flex-shrink:0}';
+  html += '.s.pass{background:#dcfce7;color:#16a34a}.s.fail{background:#fee2e2;color:#dc2626}.s.na{background:#f2f2f2;color:#999}';
+  html += '.p-badge{font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:6px;flex-shrink:0}';
+  html += '.p-high{background:#fee2e2;color:#dc2626}.p-medium{background:#fef3c7;color:#d97706}.p-low{background:#dcfce7;color:#16a34a}.p-blocking{background:#ede9fe;color:#7c3aed}';
+  html += '.test .notes{font-size:.72rem;color:#888;margin-left:8px;font-style:italic}';
+  html += '.footer{margin-top:28px;padding-top:16px;border-top:1px solid #e8eaee;font-size:.78rem;color:#888;text-align:center}';
+  html += '@media print{body{margin:20px}.no-print{display:none}}</style></head><body>';
+
+  html += '<h1>ABO Test Report</h1>';
+  html += '<div class="meta">';
+  html += '<div><span>Testing Bar:</span> <strong>' + esc(meta.bar || 'N/A') + '</strong></div>';
+  html += '<div><span>Version:</span> <strong>' + esc(meta.version || 'N/A') + '</strong></div>';
+  html += '<div><span>Environment:</span> <strong>' + esc(meta.env || 'N/A') + '</strong></div>';
+  html += '<div><span>Performed By:</span> <strong>' + esc(meta.tester || 'N/A') + '</strong></div>';
+  html += '<div><span>Date:</span> <strong>' + esc(dateStr) + '</strong></div>';
+  html += '<div><span>Total Sections:</span> <strong>' + sections.length + '</strong></div>';
+  html += '</div>';
+
+  html += '<div class="summary">';
+  html += '<div><span class="g">✓ Passed:</span> ' + totalPass + '</div>';
+  html += '<div><span class="r">✗ Failed:</span> ' + totalFail + '</div>';
+  html += '<div><span class="gr">— Untested:</span> ' + (totalTests - totalPass - totalFail) + '</div>';
+  html += '<div><strong>Total:</strong> ' + totalTests + '</div>';
+  html += '</div>';
+
+  sections.forEach(s => {
+    html += '<h2>' + esc(s.label) + '</h2>';
+    s.data.forEach(f => {
+      html += '<div class="flow"><div class="flow-hd">' + f.num + '. ' + esc(f.flow) + ' <span style="font-weight:400;color:#888;font-size:.8rem;">(' + f.tests.length + ')</span></div>';
+      const pos = f.tests.filter(t => t.type !== 'negative');
+      const neg = f.tests.filter(t => t.type === 'negative');
+      if (pos.length) { html += '<div class="pos-label">✓ Positive Cases</div>'; pos.forEach(t => { html += renderReportTest(t); }); }
+      if (neg.length) { html += '<div class="neg-label">✗ Negative Cases</div>'; neg.forEach(t => { html += renderReportTest(t); }); }
+      html += '</div>';
+    });
+  });
+
+  html += '<div class="footer">Generated by ABO Test Sheet — ' + esc(dateStr) + '</div>';
+  html += '<div class="no-print" style="text-align:center;margin-top:16px;"><button onclick="window.print()" style="padding:10px 28px;border-radius:8px;border:1px solid #4f46e5;background:#4f46e5;color:#fff;font-size:1rem;cursor:pointer;">📄 Save as PDF</button></div>';
+  html += '</body></html>';
+  return html;
+}
+
+function renderReportTest(t) {
+  const s2 = t.status === 'pass' ? 'pass' : t.status === 'fail' ? 'fail' : 'na';
+  const sl = t.status === 'pass' ? 'PASS' : t.status === 'fail' ? 'FAIL' : 'NOT TESTED';
+  let h = '<div class="test"><span class="name">' + esc(t.name) + '</span>';
+  if (t.priority) { const pc = {high:'p-high',medium:'p-medium',low:'p-low',blocking:'p-blocking'}; h += '<span class="p-badge ' + (pc[t.priority]||'') + '">' + t.priority.toUpperCase() + '</span>'; }
+  h += '<span class="s ' + s2 + '">' + sl + '</span>';
+  if (t.desc) h += '<span class="notes">' + esc(t.desc) + '</span>';
+  h += '</div>';
+  return h;
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function init() {
   document.getElementById('today').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
