@@ -226,26 +226,27 @@
     <button onclick="addFlow()">+ Flow</button>
     <button class="dl" onclick="download()">⬇ Download</button>
     <button class="dl" onclick="downloadAll()" style="background:linear-gradient(135deg,#16a34a,#22c55e);">📋 Download All</button>
+    <button class="dl" onclick="downloadFailedAll()" style="background:linear-gradient(135deg,#dc2626,#ef4444);">❌ Failed Only</button>
     <button class="rs" onclick="clearStatus()">Clear Status</button>
   </div>
 </div>
 
 <div class="tabs" id="tabs">
-  <button class="active" data-tab="client" onclick="switchTab('client')">📱 Client App</button>
-  <button data-tab="admin" onclick="switchTab('admin')">⚙️ Admin App</button>
-  <button data-tab="client_web_admin" onclick="switchTab('client_web_admin')">🌐 Client Web Admin</button>
-  <button data-tab="super_admin" onclick="switchTab('super_admin')">👑 Super Admin</button>
-  <button data-tab="abo_backend" onclick="switchTab('abo_backend')">🔧 ABO Backend</button>
+  <button class="active" data-tab="client" onclick="openTab('client', event)">📱 Client App</button>
+  <button data-tab="admin" onclick="openTab('admin', event)">⚙️ Admin App</button>
+  <button data-tab="client_web_admin" onclick="openTab('client_web_admin', event)">🌐 Client Web Admin</button>
+  <button data-tab="super_admin" onclick="openTab('super_admin', event)">👑 Super Admin</button>
+  <button data-tab="abo_backend" onclick="openTab('abo_backend', event)">🔧 ABO Backend</button>
 </div>
 
 <div class="subtabs" id="subtabs" style="display:none;">
-  <button class="active" data-sub="bar_owner" onclick="switchSubTab('bar_owner')">🏠 Bar Owner</button>
-  <button data-sub="bar_entry" onclick="switchSubTab('bar_entry')">🚪 Bar Entry</button>
-  <button data-sub="bar_waiter" onclick="switchSubTab('bar_waiter')">🍽️ Bar Waiter</button>
-  <button data-sub="dj" onclick="switchSubTab('dj')">🎧 DJ</button>
-  <button data-sub="eventier" onclick="switchSubTab('eventier')">🎉 Eventier</button>
-  <button data-sub="valet_driver" onclick="switchSubTab('valet_driver')">🚗 Valet Driver</button>
-  <button data-sub="valet_manager" onclick="switchSubTab('valet_manager')">📋 Valet Manager</button>
+  <button class="active" data-sub="bar_owner" onclick="openSubTab('bar_owner', event)">🏠 Bar Owner</button>
+  <button data-sub="bar_entry" onclick="openSubTab('bar_entry', event)">🚪 Bar Entry</button>
+  <button data-sub="bar_waiter" onclick="openSubTab('bar_waiter', event)">🍽️ Bar Waiter</button>
+  <button data-sub="dj" onclick="openSubTab('dj', event)">🎧 DJ</button>
+  <button data-sub="eventier" onclick="openSubTab('eventier', event)">🎉 Eventier</button>
+  <button data-sub="valet_driver" onclick="openSubTab('valet_driver', event)">🚗 Valet Driver</button>
+  <button data-sub="valet_manager" onclick="openSubTab('valet_manager', event)">📋 Valet Manager</button>
 </div>
 
 <div class="cnt" id="cnt"></div>
@@ -883,6 +884,12 @@ function download() {
 function downloadAll() {
   document.getElementById('metaDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('metaModal').classList.remove('hidden');
+  window._downloadMode = 'all';
+}
+function downloadFailedAll() {
+  document.getElementById('metaDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('metaModal').classList.remove('hidden');
+  window._downloadMode = 'failed';
 }
 function closeMetaModal() { document.getElementById('metaModal').classList.add('hidden'); }
 
@@ -921,7 +928,7 @@ async function confirmDownloadAll() {
     }
   }
 
-  const report = generateReportHTML(sections, meta.date, meta);
+  const report = generateReportHTML(sections, meta.date, meta, window._downloadMode === 'failed');
   const w = window.open('', '_blank');
   w.document.write(report);
   w.document.close();
@@ -935,18 +942,33 @@ function getTabLabel() {
   return 'Admin — ' + subTab.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-function generateReportHTML(sections, dateStr, meta) {
+function generateReportHTML(sections, dateStr, meta, failedOnly) {
   let totalPass = 0, totalFail = 0, totalTests = 0;
-  sections.forEach(s => s.data.forEach(f => f.tests.forEach(t => { totalTests++; if (t.status === 'pass') totalPass++; else if (t.status === 'fail') totalFail++; })));
+  let pHigh = 0, pMed = 0, pLow = 0, pBlock = 0;
+  let fHigh = 0, fMed = 0, fLow = 0, fBlock = 0;
+  sections.forEach(s => s.data.forEach(f => f.tests.forEach(t => {
+    totalTests++;
+    if (t.status === 'pass') totalPass++;
+    else if (t.status === 'fail') totalFail++;
+    if (t.priority === 'high') { pHigh++; if (t.status === 'fail') fHigh++; }
+    if (t.priority === 'medium') { pMed++; if (t.status === 'fail') fMed++; }
+    if (t.priority === 'low') { pLow++; if (t.status === 'fail') fLow++; }
+    if (t.priority === 'blocking') { pBlock++; if (t.status === 'fail') fBlock++; }
+  })));
 
-  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ABO Full Test Report</title>';
+  const title = failedOnly ? 'ABO Failed Tests Report' : 'ABO Full Test Report';
+
+  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + title + '</title>';
   html += '<style>';
   html += 'body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:900px;margin:40px auto;padding:0 20px;color:#111;line-height:1.5}';
   html += 'h1{font-size:1.6rem;margin-bottom:2px;color:#1a1a2e}h2{font-size:1.15rem;margin:28px 0 10px;color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:6px}';
   html += '.meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;margin:16px 0 24px;padding:16px 20px;background:#f0f0ff;border-radius:10px;border:1px solid #d0d0e8;font-size:.88rem}';
   html += '.meta span{color:#666}.meta strong{color:#111}';
-  html += '.summary{display:flex;gap:24px;margin-bottom:28px;padding:16px 20px;background:#f8f9fb;border-radius:10px;border:1px solid #e8eaee}';
-  html += '.summary div{font-size:.9rem}.summary .g{color:#16a34a;font-weight:600}.summary .r{color:#dc2626;font-weight:600}.summary .gr{color:#888}';
+  html += '.summary{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:20px;padding:16px 20px;background:#f8f9fb;border-radius:10px;border:1px solid #e8eaee}';
+  html += '.summary div{font-size:.85rem}.summary .g{color:#16a34a;font-weight:600}.summary .r{color:#dc2626;font-weight:600}.summary .gr{color:#888}';
+  html += '.priority-summary{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:28px;padding:14px 20px;background:#fff;border-radius:10px;border:1px solid #e8eaee}';
+  html += '.priority-summary div{font-size:.82rem;font-weight:600}';
+  html += '.priority-summary .ph{color:#dc2626}.priority-summary .pm{color:#d97706}.priority-summary .pl{color:#16a34a}.priority-summary .pb{color:#7c3aed}';
   html += '.flow{margin-bottom:18px;border:1px solid #e8eaee;border-radius:10px;overflow:hidden;page-break-inside:avoid}';
   html += '.flow-hd{background:#f8f9fb;padding:10px 16px;font-weight:600;font-size:.92rem;border-bottom:1px solid #e8eaee}';
   html += '.pos-label,.neg-label{padding:6px 16px 2px;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;font-weight:600}';
@@ -961,7 +983,7 @@ function generateReportHTML(sections, dateStr, meta) {
   html += '.footer{margin-top:28px;padding-top:16px;border-top:1px solid #e8eaee;font-size:.78rem;color:#888;text-align:center}';
   html += '@media print{body{margin:20px}.no-print{display:none}}</style></head><body>';
 
-  html += '<h1>ABO Test Report</h1>';
+  html += '<h1>' + title + '</h1>';
   html += '<div class="meta">';
   html += '<div><span>Testing Bar:</span> <strong>' + esc(meta.bar || 'N/A') + '</strong></div>';
   html += '<div><span>Version:</span> <strong>' + esc(meta.version || 'N/A') + '</strong></div>';
@@ -978,12 +1000,26 @@ function generateReportHTML(sections, dateStr, meta) {
   html += '<div><strong>Total:</strong> ' + totalTests + '</div>';
   html += '</div>';
 
+  html += '<div class="priority-summary">';
+  html += '<div class="ph">🔴 High: ' + (failedOnly ? fHigh : pHigh) + '</div>';
+  html += '<div class="pm">🟡 Medium: ' + (failedOnly ? fMed : pMed) + '</div>';
+  html += '<div class="pl">🟢 Low: ' + (failedOnly ? fLow : pLow) + '</div>';
+  html += '<div class="pb">🟣 Blocking: ' + (failedOnly ? fBlock : pBlock) + '</div>';
+  html += '</div>';
+
   sections.forEach(s => {
+    const sectionTests = [];
+    s.data.forEach(f => f.tests.forEach(t => { if (failedOnly && t.status !== 'fail') return; sectionTests.push(t); }));
+    if (failedOnly && sectionTests.length === 0) return;
+
     html += '<h2>' + esc(s.label) + '</h2>';
     s.data.forEach(f => {
-      html += '<div class="flow"><div class="flow-hd">' + f.num + '. ' + esc(f.flow) + ' <span style="font-weight:400;color:#888;font-size:.8rem;">(' + f.tests.length + ')</span></div>';
-      const pos = f.tests.filter(t => t.type !== 'negative');
-      const neg = f.tests.filter(t => t.type === 'negative');
+      const filteredTests = failedOnly ? f.tests.filter(t => t.status === 'fail') : f.tests;
+      if (failedOnly && filteredTests.length === 0) return;
+
+      html += '<div class="flow"><div class="flow-hd">' + f.num + '. ' + esc(f.flow) + ' <span style="font-weight:400;color:#888;font-size:.8rem;">(' + filteredTests.length + ')</span></div>';
+      const pos = filteredTests.filter(t => t.type !== 'negative');
+      const neg = filteredTests.filter(t => t.type === 'negative');
       if (pos.length) { html += '<div class="pos-label">✓ Positive Cases</div>'; pos.forEach(t => { html += renderReportTest(t); }); }
       if (neg.length) { html += '<div class="neg-label">✗ Negative Cases</div>'; neg.forEach(t => { html += renderReportTest(t); }); }
       html += '</div>';
@@ -1011,7 +1047,26 @@ function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 
 function init() {
   document.getElementById('today').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const params = new URLSearchParams(window.location.search);
+  const t = params.get('tab');
+  const s = params.get('sub');
+  if (t) { tab = t; document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === t)); }
+  if (s && t === 'admin') { subTab = s; document.getElementById('subtabs').style.display = 'flex'; document.querySelectorAll('#subtabs button').forEach(b => b.classList.toggle('active', b.dataset.sub === s)); }
   loadData().then(() => render());
+}
+function openTab(t, e) {
+  if (e) e.preventDefault();
+  const url = new URL(window.location.href);
+  url.searchParams.set('tab', t);
+  url.searchParams.delete('sub');
+  window.open(url.toString(), '_blank');
+}
+function openSubTab(s, e) {
+  if (e) e.preventDefault();
+  const url = new URL(window.location.href);
+  url.searchParams.set('tab', 'admin');
+  url.searchParams.set('sub', s);
+  window.open(url.toString(), '_blank');
 }
 checkAuth();
 </script>
