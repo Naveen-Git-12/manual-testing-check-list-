@@ -622,7 +622,13 @@ async function switchTab(t) {
   tab = t;
   clearUndo();
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
-  document.getElementById('subtabs').style.display = t === 'admin' ? 'flex' : 'none';
+  if (t === 'admin') {
+    subTab = subTab || 'bar_owner';
+    document.getElementById('subtabs').style.display = 'flex';
+    document.querySelectorAll('#subtabs button').forEach(b => b.classList.toggle('active', b.dataset.sub === subTab));
+  } else {
+    document.getElementById('subtabs').style.display = 'none';
+  }
   document.getElementById('search').value = '';
   await loadData();
   render();
@@ -1051,7 +1057,11 @@ function init() {
   const t = params.get('tab');
   const s = params.get('sub');
   if (t) { tab = t; document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === t)); }
-  if (s && t === 'admin') { subTab = s; document.getElementById('subtabs').style.display = 'flex'; document.querySelectorAll('#subtabs button').forEach(b => b.classList.toggle('active', b.dataset.sub === s)); }
+  if (tab === 'admin') {
+    subTab = s || 'bar_owner';
+    document.getElementById('subtabs').style.display = 'flex';
+    document.querySelectorAll('#subtabs button').forEach(b => b.classList.toggle('active', b.dataset.sub === subTab));
+  }
   loadData().then(() => render());
 }
 function openTab(t, e) {
