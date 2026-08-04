@@ -544,12 +544,12 @@ function dataKey() {
   return subTab;
 }
 
-function setSyncStatus(status) {
+function setSyncStatus(status, detail) {
   const el = document.getElementById('syncStatus');
   el.className = 'sync-status ' + status;
   if (status === 'syncing') el.textContent = '⏳ Saving...';
   else if (status === 'synced') el.textContent = '✓ Synced';
-  else if (status === 'error') el.textContent = '✗ Save failed';
+  else if (status === 'error') el.textContent = '✗ ' + (detail || 'Save failed');
   else el.textContent = '';
 }
 
@@ -657,7 +657,7 @@ async function saveData() {
     setSyncStatus('synced');
   } catch(e) {
     console.error('Save error:', e);
-    setSyncStatus('error');
+    setSyncStatus('error', 'Save failed (' + (e && e.message ? e.message.split(' ').slice(0,4).join(' ') : '') + ')');
   }
 }
 
