@@ -593,12 +593,25 @@ async function saveData() {
     const nk = 'notes_' + dataKey();
     update[nk] = notesVal;
 
-    const res = await fetch(SB_URL + '/rest/v1/abo_data', {
+    let res = await fetch(SB_URL + '/rest/v1/abo_data', {
       method: 'POST',
       headers: { ...sbHeaders(), 'Prefer': 'resolution=merge-duplicates,return=representation' },
       body: JSON.stringify(update)
     });
-    if (!res.ok) throw new Error('Save failed');
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error('Upsert failed:', res.status, errBody);
+      res = await fetch(SB_URL + '/rest/v1/abo_data?id=eq.main', {
+        method: 'PATCH',
+        headers: { ...sbHeaders(), 'Prefer': 'return=representation' },
+        body: JSON.stringify(update)
+      });
+    }
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error('Patch failed:', res.status, errBody);
+      throw new Error('Save failed: ' + res.status + ' ' + errBody.slice(0, 200));
+    }
     setSyncStatus('synced');
   } catch(e) {
     console.error('Save error:', e);
