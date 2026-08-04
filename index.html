@@ -587,13 +587,11 @@ async function loadData() {
 
 let syncTimer = null;
 let lastSyncJson = '';
-let remoteVersion = 0;
-let localVersion = 0;
-
-function bumpLocal() { localVersion++; }
+let lastSaveFailed = false;
 
 async function pollSync() {
   const key = dataKey();
+  if (lastSaveFailed) return;
   try {
     const res = await fetch(SB_URL + '/rest/v1/abo_data?id=eq.main&select=*', { headers: sbHeaders() });
     const rows = await res.json();
@@ -654,9 +652,11 @@ async function saveData() {
       throw new Error('Save failed: ' + res.status + ' ' + errBody.slice(0, 200));
     }
     lastSyncJson = JSON.stringify(data);
+    lastSaveFailed = false;
     setSyncStatus('synced');
   } catch(e) {
     console.error('Save error:', e);
+    lastSaveFailed = true;
     setSyncStatus('error', 'Save failed (' + (e && e.message ? e.message.split(' ').slice(0,4).join(' ') : '') + ')');
   }
 }
