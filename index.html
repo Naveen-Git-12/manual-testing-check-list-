@@ -568,7 +568,9 @@ async function loadData() {
         await saveData();
       }
       const nk = 'notes_' + dataKey();
-      document.getElementById('notesArea').value = row[nk] || '';
+      if (document.activeElement !== document.getElementById('notesArea')) {
+        document.getElementById('notesArea').value = row[nk] || '';
+      }
     } else {
       data = JSON.parse(JSON.stringify(DEFAULT_FLOWS[key] || []));
       document.getElementById('notesArea').value = '';
@@ -581,6 +583,45 @@ async function loadData() {
     document.getElementById('notesArea').value = '';
     setSyncStatus('error');
   }
+}
+
+let syncTimer = null;
+let lastSyncJson = '';
+let remoteVersion = 0;
+let localVersion = 0;
+
+function bumpLocal() { localVersion++; }
+
+async function pollSync() {
+  const key = dataKey();
+  try {
+    const res = await fetch(SB_URL + '/rest/v1/abo_data?id=eq.main&select=*', { headers: sbHeaders() });
+    const rows = await res.json();
+    if (!rows || rows.length === 0) return;
+    const row = rows[0];
+    const incoming = JSON.stringify(row[key] || []);
+    if (incoming !== JSON.stringify(data) && incoming !== lastSyncJson) {
+      const incomingLen = (row[key] || []).length;
+      const localLen = data.length;
+      if (incomingLen > 0 || localLen > 0) {
+        data = row[key] || data;
+        lastSyncJson = incoming;
+        const nk = 'notes_' + dataKey();
+        if (document.activeElement !== document.getElementById('notesArea')) {
+          document.getElementById('notesArea').value = row[nk] || '';
+        }
+        render();
+        setSyncStatus('synced');
+      }
+    }
+  } catch(e) {
+    console.error('Sync poll error:', e);
+  }
+}
+
+function startSync() {
+  if (syncTimer) clearInterval(syncTimer);
+  syncTimer = setInterval(pollSync, 4000);
 }
 
 async function saveData() {
@@ -612,6 +653,7 @@ async function saveData() {
       console.error('Patch failed:', res.status, errBody);
       throw new Error('Save failed: ' + res.status + ' ' + errBody.slice(0, 200));
     }
+    lastSyncJson = JSON.stringify(data);
     setSyncStatus('synced');
   } catch(e) {
     console.error('Save error:', e);
@@ -1114,7 +1156,7 @@ function init() {
     document.getElementById('subtabs').style.display = 'flex';
     document.querySelectorAll('#subtabs button').forEach(b => b.classList.toggle('active', b.dataset.sub === subTab));
   }
-  loadData().then(() => render());
+  loadData().then(() => { render(); startSync(); });
 }
 function openTab(t, e) {
   if (e) e.preventDefault();
