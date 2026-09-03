@@ -476,14 +476,26 @@ const DEFAULT_FLOWS = {
     ]},
   ],
   manager: [
-    { num:"1", flow:"Manager — Dashboard & Overview", tests:[
-      {name:"Dashboard Loads", type:"positive"},{name:"View Today's Summary (revenue, check-ins, bookings)", type:"positive"},{name:"View Bar Performance Metrics", type:"positive"},{name:"View Staff On Duty", type:"positive"},{name:"Quick Actions Visible", type:"positive"},
+    { num:"1", flow:"Coins – Buy Coins & Payment", tests:[
+      {name:"Homepage > Coins", type:"positive"},{name:"Buy Coins", type:"positive"},{name:"Continue to Payment", type:"positive"},{name:"Payment Options Displayed", type:"positive"},{name:"Select Payment Method (GPay/PhonePe/UPI/Card)", type:"positive"},{name:"Click Continue → Redirect to Payment App", type:"positive"},{name:"Make Payment", type:"positive"},{name:"Payment Successful", type:"positive"},{name:"Coins Added Successfully", type:"positive"},{name:"Payment Failed → Error Message", type:"negative"},{name:"Insufficient Balance → Error", type:"negative"},
     ]},
-    { num:"2", flow:"Manager — Staff & Roles", tests:[
-      {name:"View All Staff", type:"positive"},{name:"Add Staff Member", type:"positive"},{name:"Assign Role (Bar Entry / Waiter / DJ)", type:"positive"},{name:"Edit Staff Details", type:"positive"},{name:"Deactivate Staff", type:"negative"},{name:"View Staff Attendance", type:"positive"},
+    { num:"2", flow:"Notifications", tests:[
+      {name:"Homepage > Notifications", type:"positive"},{name:"View Notifications List", type:"positive"},{name:"Open Notification", type:"positive"},{name:"Read Details", type:"positive"},{name:"Take Action (if applicable)", type:"positive"},{name:"Mark as Read", type:"positive"},{name:"Done", type:"positive"},{name:"Empty Notifications → Empty State", type:"negative"},
     ]},
-    { num:"3", flow:"Manager — Operations & Reports", tests:[
-      {name:"View Daily Operations Report", type:"positive"},{name:"View Inventory / Stock", type:"positive"},{name:"Approve Offers / Discounts", type:"positive"},{name:"Handle Customer Complaints", type:"positive"},{name:"Export Daily Report", type:"positive"},{name:"View Audit Logs", type:"positive"},
+    { num:"3", flow:"Profile – With Changes", tests:[
+      {name:"Homepage > Profile", type:"positive"},{name:"Edit Profile", type:"positive"},{name:"Update Details (Name/Email/Phone/DOB/Gender/Profile Picture)", type:"positive"},{name:"Changes Made? Yes", type:"positive"},{name:"Update Selected Fields", type:"positive"},{name:"Save Changes", type:"positive"},{name:"Profile Updated Successfully", type:"positive"},{name:"Back to Profile Page", type:"positive"},
+    ]},
+    { num:"4", flow:"Profile – No Changes", tests:[
+      {name:"Homepage > Profile", type:"positive"},{name:"Edit Profile", type:"positive"},{name:"Update Details", type:"positive"},{name:"Changes Made? No", type:"negative"},{name:"No Changes Detected", type:"negative"},{name:"Save Disabled", type:"negative"},{name:"Back to Profile Page", type:"positive"},
+    ]},
+    { num:"5", flow:"Check-in – Manual Approval", tests:[
+      {name:"Homepage > Check-in Settings", type:"positive"},{name:"Select Approval Type > Manual Approval", type:"positive"},{name:"View Check-in Requests", type:"positive"},{name:"Check User Details", type:"positive"},{name:"Approve Check-in", type:"positive"},{name:"Reject Check-in", type:"positive"},{name:"Each Check-in Individually", type:"positive"},
+    ]},
+    { num:"6", flow:"Check-in – Automatic Approval", tests:[
+      {name:"Homepage > Check-in Settings", type:"positive"},{name:"Select Approval Type > Enable Automatic Approval", type:"positive"},{name:"Approve All Check-in Requests Automatically", type:"positive"},{name:"All Future Check-ins Auto Approved", type:"positive"},
+    ]},
+    { num:"7", flow:"Check-in – Disable", tests:[
+      {name:"Homepage > Check-in Settings", type:"positive"},{name:"Select Approval Type > Disable Check-ins", type:"positive"},{name:"No Check-in Requests Accepted", type:"positive"},{name:"Check-in Feature Disabled", type:"positive"},
     ]},
   ],
   client_web_admin: [
