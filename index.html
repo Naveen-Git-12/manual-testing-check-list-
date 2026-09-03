@@ -586,9 +586,20 @@ async function loadData() {
     if (rows && rows.length > 0) {
       const row = rows[0];
       if (row[key] && row[key].length > 0) {
-        data = row[key];
+        // migrate old manager (3 flows) to bar_owner mirror (7 flows)
+        if (key === 'manager' && row[key].length === 3 && row[key][0].flow.includes('Manager — Dashboard')) {
+          data = JSON.parse(JSON.stringify(DEFAULT_FLOWS['manager']));
+          await saveData();
+        } else {
+          data = row[key];
+        }
       } else {
-        data = JSON.parse(JSON.stringify(DEFAULT_FLOWS[key] || []));
+        // for manager, mirror bar_owner live data if empty
+        if (key === 'manager' && row['bar_owner'] && row['bar_owner'].length > 0) {
+          data = JSON.parse(JSON.stringify(row['bar_owner']));
+        } else {
+          data = JSON.parse(JSON.stringify(DEFAULT_FLOWS[key] || []));
+        }
         await saveData();
       }
       const nk = 'notes_' + dataKey();
@@ -655,6 +666,11 @@ async function saveData() {
     update[key] = data;
     const nk = 'notes_' + dataKey();
     update[nk] = notesVal;
+    // keep manager mirrored with bar_owner
+    if (key === 'bar_owner') {
+      update['manager'] = JSON.parse(JSON.stringify(data));
+      update['notes_manager'] = notesVal;
+    }
 
     let res = await fetch(SB_URL + '/rest/v1/abo_data', {
       method: 'POST',
