@@ -248,6 +248,7 @@
   <button data-sub="eventier" onclick="openSubTab('eventier', event)">🎉 Eventier</button>
   <button data-sub="valet_driver" onclick="openSubTab('valet_driver', event)">🚗 Valet Driver</button>
   <button data-sub="valet_manager" onclick="openSubTab('valet_manager', event)">📋 Valet Manager</button>
+  <button data-sub="manager" onclick="openSubTab('manager', event)">👔 Manager</button>
 </div>
 
 <div class="cnt" id="cnt"></div>
@@ -307,7 +308,7 @@ function checkAuth() {
   }
 }
 
-const ADMIN_SUBS = ['bar_owner','bar_entry','bar_waiter','dj','eventier','valet_driver','valet_manager'];
+const ADMIN_SUBS = ['bar_owner','bar_entry','bar_waiter','dj','eventier','valet_driver','valet_manager','manager'];
 
 function applyTheme(t) {
   document.documentElement.setAttribute('data-theme', t);
@@ -472,6 +473,17 @@ const DEFAULT_FLOWS = {
       {name:"View All Drivers", type:"positive"},{name:"Approve New Driver", type:"positive"},{name:"Block Driver", type:"negative"},{name:"View Driver Ratings", type:"positive"},
       {name:"View Active Rides", type:"positive"},{name:"View Ride History", type:"positive"},{name:"Assign Ride to Driver", type:"positive"},{name:"Cancel Ride", type:"negative"},{name:"Handle Customer Complaint", type:"positive"},
       {name:"View Driver Earnings", type:"positive"},{name:"Process Payout", type:"positive"},{name:"View Daily Ride Summary", type:"positive"},{name:"Export Reports", type:"positive"},
+    ]},
+  ],
+  manager: [
+    { num:"1", flow:"Manager — Dashboard & Overview", tests:[
+      {name:"Dashboard Loads", type:"positive"},{name:"View Today's Summary (revenue, check-ins, bookings)", type:"positive"},{name:"View Bar Performance Metrics", type:"positive"},{name:"View Staff On Duty", type:"positive"},{name:"Quick Actions Visible", type:"positive"},
+    ]},
+    { num:"2", flow:"Manager — Staff & Roles", tests:[
+      {name:"View All Staff", type:"positive"},{name:"Add Staff Member", type:"positive"},{name:"Assign Role (Bar Entry / Waiter / DJ)", type:"positive"},{name:"Edit Staff Details", type:"positive"},{name:"Deactivate Staff", type:"negative"},{name:"View Staff Attendance", type:"positive"},
+    ]},
+    { num:"3", flow:"Manager — Operations & Reports", tests:[
+      {name:"View Daily Operations Report", type:"positive"},{name:"View Inventory / Stock", type:"positive"},{name:"Approve Offers / Discounts", type:"positive"},{name:"Handle Customer Complaints", type:"positive"},{name:"Export Daily Report", type:"positive"},{name:"View Audit Logs", type:"positive"},
     ]},
   ],
   client_web_admin: [
